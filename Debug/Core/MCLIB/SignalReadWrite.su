@@ -1,0 +1,9 @@
+../Core/MCLIB/SignalReadWrite.c:16:9:readButton1	16	static
+../Core/MCLIB/SignalReadWrite.c:23:10:readInputCaptureCnt	16	static
+../Core/MCLIB/SignalReadWrite.c:33:7:readTimeInterval	32	static
+../Core/MCLIB/SignalReadWrite.c:55:7:readVolume	16	static
+../Core/MCLIB/SignalReadWrite.c:66:7:readVdc	16	static
+../Core/MCLIB/SignalReadWrite.c:74:6:readCurrent	16	static
+../Core/MCLIB/SignalReadWrite.c:80:6:readHallSignal	24	static
+../Core/MCLIB/SignalReadWrite.c:87:6:writeOutputMode	16	static
+../Core/MCLIB/SignalReadWrite.c:106:6:writeDuty	16	static

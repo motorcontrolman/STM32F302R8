@@ -1,0 +1,2 @@
+../Core/MCLIB/GeneralFunctions.c:12:7:gfDivideAvoidZero	32	static
+../Core/MCLIB/GeneralFunctions.c:23:7:gfWrapElectAngle	16	static
