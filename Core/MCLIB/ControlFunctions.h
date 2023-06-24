@@ -8,6 +8,7 @@
 #ifndef MCLIB_CONTROLFUNCTIONS_H_
 #define MCLIB_CONTROLFUNCTIONS_H_
 
+#include <stdint.h>
 #include "main.h"
 
 // Control Functions

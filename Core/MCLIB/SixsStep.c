@@ -6,6 +6,7 @@
  */
 
 
+#include <stdint.h>
 #include "main.h"
 #include "GlogalVariables.h"
 #include "SixsStep.h"
@@ -42,7 +43,7 @@ static void calcDuty(int8_t* outputMode, float DutyRef, float* Duty);
 
 
 // input DutyRef minus1-1, output Duty 0-1
-void sixStepTasks(float DutyRef, float leadAngle, float* Duty){
+void sixStepTasks(float DutyRef, float leadAngle, float Theta, float* Duty){
 
 	float electAnglePrusLeadAngle;
 	float wc_PLL;
@@ -97,6 +98,7 @@ void sixStepTasks(float DutyRef, float leadAngle, float* Duty){
 		// Estimate Electrical Angle & Velocity using PLL
 		sElectAngleEstimate += sElectAngVeloEstimate * CARRIERCYCLE;
 		sElectAngleEstimate = gfWrapElectAngle(sElectAngleEstimate);
+		Theta = sElectAngleEstimate;
 
 		electAnglePrusLeadAngle = sElectAngleEstimate + leadAngle;
 		electAnglePrusLeadAngle = gfWrapElectAngle(electAnglePrusLeadAngle);

@@ -1,8 +1,8 @@
-../Core/MCLIB/SixsStep.c:45:6:sixStepTasks	48	static
-../Core/MCLIB/SixsStep.c:160:16:calcVoltageMode	24	static
-../Core/MCLIB/SixsStep.c:193:13:calcRotDirFromVoltageMode	24	static
-../Core/MCLIB/SixsStep.c:210:14:calcElectAngleFromVoltageMode	24	static
-../Core/MCLIB/SixsStep.c:245:16:calcLeadAngleModeFlg	16	static
-../Core/MCLIB/SixsStep.c:256:16:calcVoltageModeFromElectAngle	48	static
-../Core/MCLIB/SixsStep.c:312:13:calcOutputMode	16	static
-../Core/MCLIB/SixsStep.c:353:13:calcDuty	32	static
+../Core/MCLIB/SixsStep.c:46:6:sixStepTasks	48	static
+../Core/MCLIB/SixsStep.c:162:16:calcVoltageMode	24	static
+../Core/MCLIB/SixsStep.c:195:13:calcRotDirFromVoltageMode	24	static
+../Core/MCLIB/SixsStep.c:212:14:calcElectAngleFromVoltageMode	24	static
+../Core/MCLIB/SixsStep.c:247:16:calcLeadAngleModeFlg	16	static
+../Core/MCLIB/SixsStep.c:258:16:calcVoltageModeFromElectAngle	48	static
+../Core/MCLIB/SixsStep.c:314:13:calcOutputMode	16	static
+../Core/MCLIB/SixsStep.c:355:13:calcDuty	32	static

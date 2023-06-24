@@ -8,6 +8,7 @@
 #ifndef MCLIB_GLOGALVARIABLES_H_
 #define MCLIB_GLOGALVARIABLES_H_
 
+#include <stdint.h>
 #include "main.h"
 
 #define OUTPUTMODE_OPEN 		0
@@ -24,6 +25,9 @@
 #define TWOPI 6.283185307f
 #define PIDIV3 1.047197551f
 #define PIDIV6 0.523598776f
+#define SQRT3DIV2_DIV2		0.612372436f
+#define SQRT_2DIV3			0.816496581f
+#define SQRT3_DIV3			0.86602540378f
 
 // Global Variables
 extern uint16_t gAdcValue[2];
@@ -36,8 +40,13 @@ extern uint32_t gInputCaptureCnt;
 extern uint32_t gInputCaptureCnt_pre;
 
 extern float gElectFreq;
+extern float gTheta;
 extern float gVdc;
 extern float gVolume;
+extern float gIuvw[3];
+extern uint16_t gIuvw_AD[3];
+
+
 extern int8_t gOutputMode[3];
 extern float gDutyRef;
 extern float gDuty[3];

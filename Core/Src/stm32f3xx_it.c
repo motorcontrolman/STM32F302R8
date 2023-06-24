@@ -24,6 +24,7 @@
 /* USER CODE BEGIN Includes */
 #include "GlogalVariables.h"
 #include "SixsStep.h"
+#include "VectorControl.h"
 #include "SignalReadWrite.h"
 /* USER CODE END Includes */
 
@@ -233,6 +234,7 @@ void ADC1_IRQHandler(void)
 	//read IO signals
 	gButton1 = readButton1();
 	gVolume = readVolume();
+  readCurrent(gIuvw_AD, gIuvw);
 	gVdc = readVdc();
 
 	//DutyRef Calculation
@@ -256,7 +258,11 @@ void ADC1_IRQHandler(void)
 	//gDutyRef = 0.5f;
 
 	//Input DutyRef, Lead Angle Output Duty
-	sixStepTasks(gDutyRef, 0.0f, gDuty);
+	sixStepTasks(gDutyRef, 0.0f, gTheta, gDuty);
+  
+  //
+  //VectorControlTasks(Idq_ref, gTheta, gIuvw, gVdc, gDuty);
+
 	HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
   /* USER CODE END ADC1_IRQn 1 */
 }

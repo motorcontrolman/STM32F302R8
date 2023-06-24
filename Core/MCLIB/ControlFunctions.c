@@ -5,6 +5,7 @@
  *      Author: r720r
  */
 
+#include <stdint.h>
 #include "main.h"
 #include "ControlFunctions.h"
 

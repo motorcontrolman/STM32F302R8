@@ -5,6 +5,7 @@
  *      Author: r720r
  */
 
+#include <stdint.h>
 #include "main.h"
 #include "GeneralFunctions.h"
 #include "GlogalVariables.h"
@@ -21,6 +22,7 @@ float gfDivideAvoidZero(float num, float den, float  threshold){
 }
 
 float gfWrapElectAngle(float electAngle){
+	electAngle = fmodf(electAngle, TWOPI);
 	if( electAngle > PI)
 		electAngle -= TWOPI;
 	else if( electAngle < -PI)

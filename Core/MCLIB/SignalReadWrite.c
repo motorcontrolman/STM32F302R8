@@ -5,6 +5,8 @@
  *      Author: r720r
  */
 
+#include <stdint.h>
+#include <math.h>
 #include "main.h"
 #include "GlogalVariables.h"
 #include "SignalReadWrite.h"
@@ -71,10 +73,14 @@ float readVdc(void){
 	return Vdc;
 }
 
-void readCurrent(uint16_t* Iuvw_AD){
+void readCurrent(uint16_t* Iuvw_AD, float* Iuvw){
 	Iuvw_AD[0] = ADC1 -> JDR1; // Iu
 	Iuvw_AD[1] = ADC1 -> JDR2; // Iv
 	Iuvw_AD[2] = ADC1 -> JDR3; // Iw
+
+	Iuvw[0] = ((float)Iuvw_AD[0] - 1901) * -0.00193586253f;
+	Iuvw[1] = ((float)Iuvw_AD[1] - 1864) * -0.00193586253f;
+	Iuvw[2] = ((float)Iuvw_AD[2] - 1871) * -0.00193586253f;
 }
 
 void readHallSignal(uint8_t* Hall){

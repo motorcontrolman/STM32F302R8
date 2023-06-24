@@ -8,6 +8,7 @@
 #ifndef MCLIB_GENERALFUNCTIONS_H_
 #define MCLIB_GENERALFUNCTIONS_H_
 
+#include <stdint.h>
 #include "main.h"
 
 float gfWrapElectAngle(float electAngle);

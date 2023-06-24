@@ -9,21 +9,24 @@ C_SRCS += \
 ../Core/MCLIB/GeneralFunctions.c \
 ../Core/MCLIB/GlogalVariables.c \
 ../Core/MCLIB/SignalReadWrite.c \
-../Core/MCLIB/SixsStep.c 
+../Core/MCLIB/SixsStep.c \
+../Core/MCLIB/VectorControl.c 
 
 OBJS += \
 ./Core/MCLIB/ControlFunctions.o \
 ./Core/MCLIB/GeneralFunctions.o \
 ./Core/MCLIB/GlogalVariables.o \
 ./Core/MCLIB/SignalReadWrite.o \
-./Core/MCLIB/SixsStep.o 
+./Core/MCLIB/SixsStep.o \
+./Core/MCLIB/VectorControl.o 
 
 C_DEPS += \
 ./Core/MCLIB/ControlFunctions.d \
 ./Core/MCLIB/GeneralFunctions.d \
 ./Core/MCLIB/GlogalVariables.d \
 ./Core/MCLIB/SignalReadWrite.d \
-./Core/MCLIB/SixsStep.d 
+./Core/MCLIB/SixsStep.d \
+./Core/MCLIB/VectorControl.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes
@@ -33,7 +36,7 @@ Core/MCLIB/%.o Core/MCLIB/%.su Core/MCLIB/%.cyclo: ../Core/MCLIB/%.c Core/MCLIB/
 clean: clean-Core-2f-MCLIB
 
 clean-Core-2f-MCLIB:
-	-$(RM) ./Core/MCLIB/ControlFunctions.cyclo ./Core/MCLIB/ControlFunctions.d ./Core/MCLIB/ControlFunctions.o ./Core/MCLIB/ControlFunctions.su ./Core/MCLIB/GeneralFunctions.cyclo ./Core/MCLIB/GeneralFunctions.d ./Core/MCLIB/GeneralFunctions.o ./Core/MCLIB/GeneralFunctions.su ./Core/MCLIB/GlogalVariables.cyclo ./Core/MCLIB/GlogalVariables.d ./Core/MCLIB/GlogalVariables.o ./Core/MCLIB/GlogalVariables.su ./Core/MCLIB/SignalReadWrite.cyclo ./Core/MCLIB/SignalReadWrite.d ./Core/MCLIB/SignalReadWrite.o ./Core/MCLIB/SignalReadWrite.su ./Core/MCLIB/SixsStep.cyclo ./Core/MCLIB/SixsStep.d ./Core/MCLIB/SixsStep.o ./Core/MCLIB/SixsStep.su
+	-$(RM) ./Core/MCLIB/ControlFunctions.cyclo ./Core/MCLIB/ControlFunctions.d ./Core/MCLIB/ControlFunctions.o ./Core/MCLIB/ControlFunctions.su ./Core/MCLIB/GeneralFunctions.cyclo ./Core/MCLIB/GeneralFunctions.d ./Core/MCLIB/GeneralFunctions.o ./Core/MCLIB/GeneralFunctions.su ./Core/MCLIB/GlogalVariables.cyclo ./Core/MCLIB/GlogalVariables.d ./Core/MCLIB/GlogalVariables.o ./Core/MCLIB/GlogalVariables.su ./Core/MCLIB/SignalReadWrite.cyclo ./Core/MCLIB/SignalReadWrite.d ./Core/MCLIB/SignalReadWrite.o ./Core/MCLIB/SignalReadWrite.su ./Core/MCLIB/SixsStep.cyclo ./Core/MCLIB/SixsStep.d ./Core/MCLIB/SixsStep.o ./Core/MCLIB/SixsStep.su ./Core/MCLIB/VectorControl.cyclo ./Core/MCLIB/VectorControl.d ./Core/MCLIB/VectorControl.o ./Core/MCLIB/VectorControl.su
 
 .PHONY: clean-Core-2f-MCLIB
 
