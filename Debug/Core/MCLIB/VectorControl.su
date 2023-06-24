@@ -1,0 +1,7 @@
+../Core/MCLIB/VectorControl.c:27:6:VectorControlTasks	40	static
+../Core/MCLIB/VectorControl.c:45:13:uvw2ab	16	static
+../Core/MCLIB/VectorControl.c:50:13:ab2uvw	16	static
+../Core/MCLIB/VectorControl.c:56:13:ab2dq	32	static
+../Core/MCLIB/VectorControl.c:65:13:dq2ab	32	static
+../Core/MCLIB/VectorControl.c:74:13:Vuvw2Duty	32	static
+../Core/MCLIB/VectorControl.c:87:13:CurrentFbControl	40	static

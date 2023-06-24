@@ -1,0 +1,7 @@
+VectorControl.c:27:6:VectorControlTasks	1
+VectorControl.c:45:13:uvw2ab	1
+VectorControl.c:50:13:ab2uvw	1
+VectorControl.c:56:13:ab2dq	1
+VectorControl.c:65:13:dq2ab	1
+VectorControl.c:74:13:Vuvw2Duty	1
+VectorControl.c:87:13:CurrentFbControl	1
