@@ -12,6 +12,6 @@
 #include "main.h"
 
 // Global Functions
-void sixStepTasks(float DutyRef, float leadAngle, float Theta, float *Duty);
+void sixStepTasks(float DutyRef, float leadAngle, float* Theta, float* Duty, float* outputMode);
 
 #endif /* ORIGINAL_SIXSSTEP_H_ */

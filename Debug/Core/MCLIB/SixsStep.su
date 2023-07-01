@@ -1,4 +1,4 @@
-../Core/MCLIB/SixsStep.c:46:6:sixStepTasks	48	static
+../Core/MCLIB/SixsStep.c:46:6:sixStepTasks	56	static
 ../Core/MCLIB/SixsStep.c:162:16:calcVoltageMode	24	static
 ../Core/MCLIB/SixsStep.c:195:13:calcRotDirFromVoltageMode	24	static
 ../Core/MCLIB/SixsStep.c:212:14:calcElectAngleFromVoltageMode	24	static
