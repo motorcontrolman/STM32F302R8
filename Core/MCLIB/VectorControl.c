@@ -9,6 +9,7 @@
 #include <stdint.h>
 #include "math.h"
 #include "GlogalVariables.h"
+#include "GeneralFunctions.h"
 #include "VectorControl.h"
 
 float sIab[2];
@@ -16,15 +17,16 @@ float sIdq[2];
 float sVdq[2];
 float sVab[2];
 float sVuvw[3];
+float sOpenTheta = 0.0f;
 
 static void uvw2ab(float *uvw, float *ab);
 static void ab2uvw(float *ab, float *uvw);
-static void ab2dq(float Theta, float *ab, float *dq);
-static void dq2ab(float Theta, float *dq, float *ab);
+static void ab2dq(float theta, float *ab, float *dq);
+static void dq2ab(float theta, float *dq, float *ab);
 static void Vuvw2Duty(float Vdc, float *Vuvw, float *Duty);
 static void CurrentFbControl(float *Igd_ref, float *Igd, float *Vgd);
 
-void VectorControlTasks(float *Idq_ref, float Theta, float *Iuvw, float Vdc, float* Duty){
+void VectorControlTasks(float *Idq_ref, float theta, float *Iuvw, float Vdc, float* Duty){
 	uint8_t outputMode[3];
 	outputMode[0] = OUTPUTMODE_POSITIVE;
 	outputMode[1] = OUTPUTMODE_POSITIVE;
@@ -32,9 +34,29 @@ void VectorControlTasks(float *Idq_ref, float Theta, float *Iuvw, float Vdc, flo
 
 
 	uvw2ab(gIuvw, sIab);
-	ab2dq(Theta, sIab, sIdq);
+	ab2dq(theta, sIab, sIdq);
 	CurrentFbControl(Idq_ref, sIdq, sVdq);
-	dq2ab(Theta, sVdq, sVab);
+	dq2ab(theta, sVdq, sVab);
+	ab2uvw(sVab, sVuvw);
+	Vuvw2Duty(Vdc, sVuvw, Duty);
+	writeOutputMode(outputMode);
+	writeDuty(Duty);
+
+}
+
+void OpenLoopTasks(float VamRef, float omega, float *Iuvw, float Vdc, float* Duty){
+	uint8_t outputMode[3];
+	outputMode[0] = OUTPUTMODE_POSITIVE;
+	outputMode[1] = OUTPUTMODE_POSITIVE;
+	outputMode[2] = OUTPUTMODE_POSITIVE;
+
+	gfOmega2Theta(omega, CARRIERCYCLE, &sOpenTheta);
+
+	uvw2ab(gIuvw, sIab);
+	ab2dq(sOpenTheta, sIab, sIdq);
+	sVdq[0] = 0.0f;
+	sVdq[1] = VamRef;
+	dq2ab(sOpenTheta, sVdq, sVab);
 	ab2uvw(sVab, sVuvw);
 	Vuvw2Duty(Vdc, sVuvw, Duty);
 	writeOutputMode(outputMode);
@@ -53,20 +75,20 @@ static void ab2uvw(float* ab, float* uvw){
 	uvw[2] = - uvw[0] - uvw[1];
 }
 
-static void ab2dq(float Theta, float* ab, float* dq){
+static void ab2dq(float theta, float* ab, float* dq){
 	float sinTheta;
 	float cosTheta;
-	sinTheta = sinf(Theta);
-	cosTheta = cosf(Theta);
+	sinTheta = sinf(theta);
+	cosTheta = cosf(theta);
 	dq[0] = ab[0] * cosTheta + ab[1] * sinTheta;
 	dq[1] = - ab[0] * sinTheta + ab[1] * cosTheta;
 }
 
-static void dq2ab(float Theta, float* dq, float* ab){
+static void dq2ab(float theta, float* dq, float* ab){
 	float sinTheta;
 	float cosTheta;
-	sinTheta = sinf(Theta);
-	cosTheta = cosf(Theta);
+	sinTheta = sinf(theta);
+	cosTheta = cosf(theta);
 	ab[0] = dq[0] * cosTheta - dq[1] * sinTheta;
 	ab[1] = dq[0] * sinTheta + dq[1] * cosTheta;
 }

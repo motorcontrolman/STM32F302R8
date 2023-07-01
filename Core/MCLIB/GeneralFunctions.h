@@ -11,7 +11,8 @@
 #include <stdint.h>
 #include "main.h"
 
-float gfWrapElectAngle(float electAngle);
-float gfDivideAvoidZero(float num, float den, float  threshold);
+float gfWrapTheta(float electAngle);
+void gfOmega2Theta(float omega, float Ts, float *theta);
+float gfDivideAvoidZero(float num, float den, float threshold);
 
 #endif /* MCLIB_GENERALFUNCTIONS_H_ */

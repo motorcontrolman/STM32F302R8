@@ -27,8 +27,8 @@ uint8_t sLeadAngleModeFlg_pre;
 
 float sElectAngleActual;
 float sElectAngleActual_pre;
-float sElectAngleEstimate = 0;
-float sIntegral_ElectAngleErr_Ki = 0;
+float sElectAngleEstimate = 0.0f;
+float sIntegral_ElectAngleErr_Ki = 0.0f;
 float sElectAngVeloEstimate;
 float sElectAngleErr;
 
@@ -80,7 +80,7 @@ void sixStepTasks(float DutyRef, float leadAngle, float Theta, float* Duty){
 	sElectAngleActual_pre = sElectAngleActual;
 	calcRotDirFromVoltageMode(sVoltageMode_pre, sVoltageMode, &sRotDir);
 	sElectAngleActual = calcElectAngleFromVoltageMode(sVoltageMode, sRotDir);
-	sElectAngleActual = gfWrapElectAngle(sElectAngleActual);
+	sElectAngleActual = gfWrapTheta(sElectAngleActual);
 
 	// Hold & Calculate Whether to Use Lead Angle Control Mode.
 	sLeadAngleModeFlg_pre = sLeadAngleModeFlg;
@@ -97,11 +97,11 @@ void sixStepTasks(float DutyRef, float leadAngle, float Theta, float* Duty){
 
 		// Estimate Electrical Angle & Velocity using PLL
 		sElectAngleEstimate += sElectAngVeloEstimate * CARRIERCYCLE;
-		sElectAngleEstimate = gfWrapElectAngle(sElectAngleEstimate);
+		sElectAngleEstimate = gfWrapTheta(sElectAngleEstimate);
 		Theta = sElectAngleEstimate;
 
 		electAnglePrusLeadAngle = sElectAngleEstimate + leadAngle;
-		electAnglePrusLeadAngle = gfWrapElectAngle(electAnglePrusLeadAngle);
+		electAnglePrusLeadAngle = gfWrapTheta(electAnglePrusLeadAngle);
 
 		sVoltageModeModify = calcVoltageModeFromElectAngle(electAnglePrusLeadAngle);
 
@@ -109,7 +109,7 @@ void sixStepTasks(float DutyRef, float leadAngle, float Theta, float* Duty){
 			sElectAngleErr = sElectAngleActual - sElectAngleEstimate;
 
 			// wrap Electrical Angle Err
-			sElectAngleErr = gfWrapElectAngle(sElectAngleErr);
+			sElectAngleErr = gfWrapTheta(sElectAngleErr);
 
 			//PLL
 			sElectAngVeloEstimate = cfPhaseLockedLoop(sElectAngleErr, Kp_PLL, Ki_PLL, &sIntegral_ElectAngleErr_Ki);
@@ -266,28 +266,6 @@ static uint8_t calcVoltageModeFromElectAngle(float electAngle){
 	float voltageMode5_StartAngle = PIDIV3 + PIDIV6;
 	float voltageMode6_StartAngle = PIDIV3 * 2.0f + PIDIV6;
 
-	/*
-	if(electAngle >= voltageMode3_StartAngle || electAngle < voltageMode4_StartAngle ){
-		voltageMode = 3;
-	}
-	else if(electAngle >= voltageMode4_StartAngle && electAngle < voltageMode5_StartAngle ){
-		voltageMode = 4;
-	}
-	else if(electAngle >= voltageMode5_StartAngle && electAngle < voltageMode6_StartAngle ){
-		voltageMode = 5;
-	}
-	else if(electAngle >= voltageMode6_StartAngle && electAngle < voltageMode1_StartAngle ){
-		voltageMode = 6;
-	}
-	else if(electAngle >= voltageMode1_StartAngle && electAngle < voltageMode2_StartAngle ){
-		voltageMode = 1;
-	}
-	else if(electAngle >= voltageMode2_StartAngle && electAngle < voltageMode3_StartAngle ){
-		voltageMode = 2;
-	}
-	else
-		voltageMode = 0;
-		*/
 	if(electAngle >= voltageMode6_StartAngle || electAngle < voltageMode1_StartAngle ){
 		voltageMode = 6;
 	}

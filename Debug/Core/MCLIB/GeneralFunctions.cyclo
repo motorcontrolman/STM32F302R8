@@ -1,2 +1,3 @@
 GeneralFunctions.c:13:7:gfDivideAvoidZero	5
-GeneralFunctions.c:24:7:gfWrapElectAngle	3
+GeneralFunctions.c:24:7:gfWrapTheta	3
+GeneralFunctions.c:34:6:gfOmega2Theta	1

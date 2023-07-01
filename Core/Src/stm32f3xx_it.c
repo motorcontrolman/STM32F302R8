@@ -258,8 +258,9 @@ void ADC1_IRQHandler(void)
 	//gDutyRef = 0.5f;
 
 	//Input DutyRef, Lead Angle Output Duty
-	sixStepTasks(gDutyRef, 0.0f, gTheta, gDuty);
+	//sixStepTasks(gDutyRef, 0.0f, gTheta, gDuty);
   
+  OpenLoopTasks(gDutyRef, 100.0f, gIuvw, gVdc, gDuty);
   //
   //VectorControlTasks(Idq_ref, gTheta, gIuvw, gVdc, gDuty);
 
