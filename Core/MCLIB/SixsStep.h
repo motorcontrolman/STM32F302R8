@@ -8,9 +8,10 @@
 #ifndef ORIGINAL_SIXSSTEP_H_
 #define ORIGINAL_SIXSSTEP_H_
 
+#include <stdint.h>
 #include "main.h"
 
 // Global Functions
-void sixStepTasks(float DutyRef, float leadAngle, float* Duty);
+void sixStepTasks(float DutyRef, float leadAngle, float Theta, float *Duty);
 
 #endif /* ORIGINAL_SIXSSTEP_H_ */

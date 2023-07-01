@@ -5,6 +5,7 @@
  *      Author: r720r
  */
 
+#include <stdint.h>
 #include "main.h"
 #include "GeneralFunctions.h"
 #include "GlogalVariables.h"
@@ -20,12 +21,22 @@ float gfDivideAvoidZero(float num, float den, float  threshold){
 	return result;
 }
 
-float gfWrapElectAngle(float electAngle){
-	if( electAngle > PI)
-		electAngle -= TWOPI;
-	else if( electAngle < -PI)
-		electAngle += TWOPI;
+float gfWrapTheta(float theta){
+	theta = fmodf(theta, TWOPI);
+	if( theta > PI)
+		theta -= TWOPI;
+	else if( theta < -PI)
+		theta += TWOPI;
 
-	return electAngle;
+	return theta;
 }
+
+void gfOmega2Theta(float omega, float Ts, float *theta){
+	float wrapTheta;
+
+	*theta += omega * Ts;
+	wrapTheta = gfWrapTheta(*theta);
+	*theta = wrapTheta;
+}
+
 

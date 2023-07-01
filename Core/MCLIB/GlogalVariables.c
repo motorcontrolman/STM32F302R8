@@ -6,6 +6,7 @@
  */
 
 
+#include <stdint.h>
 #include "GlogalVariables.h"
 #include "main.h"
 
@@ -17,8 +18,11 @@ uint32_t gTIMCounter_pre;
 uint32_t gInputCaptureCnt;
 uint32_t gInputCaptureCnt_pre;
 float gElectFreq = 0;
+float gTheta;
 float gVdc;
 float gVolume;
+float gIuvw[3];
+uint16_t gIuvw_AD[3];
 int8_t gOutputMode[3];
 float gDutyRef = 0;
 float gDuty[3];
