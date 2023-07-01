@@ -17,7 +17,6 @@ float sIdq[2];
 float sVdq[2];
 float sVab[2];
 float sVuvw[3];
-float sOpenTheta = 0.0f;
 
 static void uvw2ab(float *uvw, float *ab);
 static void ab2uvw(float *ab, float *uvw);
@@ -44,19 +43,17 @@ void VectorControlTasks(float *Idq_ref, float theta, float *Iuvw, float Vdc, flo
 
 }
 
-void OpenLoopTasks(float VamRef, float omega, float *Iuvw, float Vdc, float* Duty){
+void OpenLoopTasks(float VamRef, float theta, float *Iuvw, float Vdc, float* Duty){
 	uint8_t outputMode[3];
 	outputMode[0] = OUTPUTMODE_POSITIVE;
 	outputMode[1] = OUTPUTMODE_POSITIVE;
 	outputMode[2] = OUTPUTMODE_POSITIVE;
 
-	gfOmega2Theta(omega, CARRIERCYCLE, &sOpenTheta);
-
 	uvw2ab(gIuvw, sIab);
-	ab2dq(sOpenTheta, sIab, sIdq);
+	ab2dq(theta, sIab, sIdq);
 	sVdq[0] = 0.0f;
 	sVdq[1] = VamRef;
-	dq2ab(sOpenTheta, sVdq, sVab);
+	dq2ab(theta, sVdq, sVab);
 	ab2uvw(sVab, sVuvw);
 	Vuvw2Duty(Vdc, sVuvw, Duty);
 	writeOutputMode(outputMode);

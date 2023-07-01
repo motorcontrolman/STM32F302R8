@@ -43,7 +43,7 @@ static void calcDuty(int8_t* outputMode, float DutyRef, float* Duty);
 
 
 // input DutyRef minus1-1, output Duty 0-1
-void sixStepTasks(float DutyRef, float leadAngle, float Theta, float* Duty){
+void sixStepTasks(float DutyRef, float leadAngle, float* Theta, float* Duty, float* outputMode){
 
 	float electAnglePrusLeadAngle;
 	float wc_PLL;
@@ -98,7 +98,6 @@ void sixStepTasks(float DutyRef, float leadAngle, float Theta, float* Duty){
 		// Estimate Electrical Angle & Velocity using PLL
 		sElectAngleEstimate += sElectAngVeloEstimate * CARRIERCYCLE;
 		sElectAngleEstimate = gfWrapTheta(sElectAngleEstimate);
-		Theta = sElectAngleEstimate;
 
 		electAnglePrusLeadAngle = sElectAngleEstimate + leadAngle;
 		electAnglePrusLeadAngle = gfWrapTheta(electAnglePrusLeadAngle);
@@ -127,9 +126,10 @@ void sixStepTasks(float DutyRef, float leadAngle, float Theta, float* Duty){
 	// Output Voltage
 	calcDuty(sOutputMode, DutyRef, Duty);
 
-	//write IO signals
-	writeOutputMode(sOutputMode);
-	writeDuty(Duty);
+	// Output Static Signals
+	outputMode = sOutputMode;
+	*Theta = sElectAngleEstimate;
+
 
 }
 
