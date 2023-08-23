@@ -33,7 +33,10 @@ Core/Src/stm32f3xx_it.o: ../Core/Src/stm32f3xx_it.c ../Core/Inc/main.h \
  ../Core/Inc/stm32f3xx_it.h \
  C:/Users/r720r/STM32CubeIDE/workspace_1.12.1/STM32F302R8/Core/MCLIB/GlogalVariables.h \
  C:/Users/r720r/STM32CubeIDE/workspace_1.12.1/STM32F302R8/Core/MCLIB/SixsStep.h \
- C:/Users/r720r/STM32CubeIDE/workspace_1.12.1/STM32F302R8/Core/MCLIB/SignalReadWrite.h
+ C:/Users/r720r/STM32CubeIDE/workspace_1.12.1/STM32F302R8/Core/MCLIB/VectorControl.h \
+ C:/Users/r720r/STM32CubeIDE/workspace_1.12.1/STM32F302R8/Core/MCLIB/GlogalVariables.h \
+ C:/Users/r720r/STM32CubeIDE/workspace_1.12.1/STM32F302R8/Core/MCLIB/SignalReadWrite.h \
+ C:/Users/r720r/STM32CubeIDE/workspace_1.12.1/STM32F302R8/Core/MCLIB/GeneralFunctions.h
 ../Core/Inc/main.h:
 ../Drivers/STM32F3xx_HAL_Driver/Inc/stm32f3xx_hal.h:
 ../Core/Inc/stm32f3xx_hal_conf.h:
@@ -69,4 +72,7 @@ Core/Src/stm32f3xx_it.o: ../Core/Src/stm32f3xx_it.c ../Core/Inc/main.h \
 ../Core/Inc/stm32f3xx_it.h:
 C:/Users/r720r/STM32CubeIDE/workspace_1.12.1/STM32F302R8/Core/MCLIB/GlogalVariables.h:
 C:/Users/r720r/STM32CubeIDE/workspace_1.12.1/STM32F302R8/Core/MCLIB/SixsStep.h:
+C:/Users/r720r/STM32CubeIDE/workspace_1.12.1/STM32F302R8/Core/MCLIB/VectorControl.h:
+C:/Users/r720r/STM32CubeIDE/workspace_1.12.1/STM32F302R8/Core/MCLIB/GlogalVariables.h:
 C:/Users/r720r/STM32CubeIDE/workspace_1.12.1/STM32F302R8/Core/MCLIB/SignalReadWrite.h:
+C:/Users/r720r/STM32CubeIDE/workspace_1.12.1/STM32F302R8/Core/MCLIB/GeneralFunctions.h:

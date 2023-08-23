@@ -18,6 +18,7 @@
 int8_t sOutputMode[3];
 uint8_t sVoltageMode;
 uint8_t sVoltageMode_pre;
+uint16_t sNoInputCaptureCnt = 0;
 uint8_t sVoltageModeChangedFlg;
 uint8_t sVoltageModeModify;
 int8_t sRotDir = 0;
@@ -43,7 +44,7 @@ static void calcDuty(int8_t* outputMode, float DutyRef, float* Duty);
 
 
 // input DutyRef minus1-1, output Duty 0-1
-void sixStepTasks(float DutyRef, float leadAngle, float* Theta, float* Duty, float* outputMode){
+void sixStepTasks(float DutyRef, uint8_t leadAngleModeFlg, float leadAngle, float* Theta, float* electAngVelo, float* Duty, int8_t* outputMode){
 
 	float electAnglePrusLeadAngle;
 	float wc_PLL;
@@ -62,12 +63,22 @@ void sixStepTasks(float DutyRef, float leadAngle, float* Theta, float* Duty, flo
 	// Calculate Electrical Freq From Input Capture Count
 	if(gInputCaptureCnt != gInputCaptureCnt_pre){
 		timeInterval = readTimeInterval(gInputCaptureCnt, gInputCaptureCnt_pre);
-		gElectFreq = gfDivideAvoidZero(1.0f, timeInterval, SYSTEMCLOCKCYCLE);
+		if( timeInterval > 0.0001f)
+			gElectFreq = gfDivideAvoidZero(1.0f, timeInterval, SYSTEMCLOCKCYCLE);
+
+		sNoInputCaptureCnt = 0;
 	}
+	else if(sNoInputCaptureCnt < 2000)
+		sNoInputCaptureCnt ++;
+	else
+		gElectFreq = 0;
+
 
 	// Calculate PLL Gain based on Electrical Frequency
-	wc_PLL = gElectFreq * 0.5f * TWOPI;
-	Ts_PLL = 1.0f / (gElectFreq * 6.0f);
+	wc_PLL = sElectAngVeloEstimate * 0.5f;//gElectFreq * 0.5f * TWOPI;
+	//if (wc_PLL > 6000)
+	//	wc_PLL = 6000;
+	Ts_PLL = 1.0f / (sElectAngVeloEstimate * ONEDIVTWOPI * 6.0f);
 	Kp_PLL = wc_PLL;
 	Ki_PLL = 0.2f * wc_PLL * wc_PLL * Ts_PLL;
 
@@ -84,7 +95,7 @@ void sixStepTasks(float DutyRef, float leadAngle, float* Theta, float* Duty, flo
 
 	// Hold & Calculate Whether to Use Lead Angle Control Mode.
 	sLeadAngleModeFlg_pre = sLeadAngleModeFlg;
-	sLeadAngleModeFlg = 0;//calcLeadAngleModeFlg();
+	sLeadAngleModeFlg = leadAngleModeFlg;//calcLeadAngleModeFlg();
 
 	if(sLeadAngleModeFlg == 1){
 		// Six Step Control using Electrical Angle Consider with Lead Angle
@@ -121,15 +132,20 @@ void sixStepTasks(float DutyRef, float leadAngle, float* Theta, float* Duty, flo
 	else{
 		// Control without Electrical Angle ( Use Only Hall Signals )
 		calcOutputMode(sVoltageMode, sOutputMode);
+		sElectAngleEstimate = sElectAngleActual;
+		sElectAngVeloEstimate = gElectFreq * TWOPI;
 	}
 
 	// Output Voltage
 	calcDuty(sOutputMode, DutyRef, Duty);
 
 	// Output Static Signals
-	outputMode = sOutputMode;
-	*Theta = sElectAngleEstimate;
+	outputMode[0] = sOutputMode[0];
+	outputMode[1] = sOutputMode[1];
+	outputMode[2] = sOutputMode[2];
 
+	*Theta = sElectAngleEstimate;
+	*electAngVelo = sElectAngVeloEstimate;
 
 }
 
@@ -248,9 +264,9 @@ static uint8_t calcLeadAngleModeFlg(void){
 	uint8_t leadAngleModeFlg;
 
 	if(gButton1 == 0)
-		leadAngleModeFlg = 1;
-	else
 		leadAngleModeFlg = 0;
+	else
+		leadAngleModeFlg = 1;
 
 	return leadAngleModeFlg;
 }

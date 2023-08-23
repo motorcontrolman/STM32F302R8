@@ -14,5 +14,6 @@
 float gfWrapTheta(float electAngle);
 void gfOmega2Theta(float omega, float Ts, float *theta);
 float gfDivideAvoidZero(float num, float den, float threshold);
+float gUpperLowerLimit(float input, float Upper, float Lower);
 
 #endif /* MCLIB_GENERALFUNCTIONS_H_ */

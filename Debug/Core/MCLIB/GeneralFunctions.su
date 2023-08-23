@@ -1,2 +1,4 @@
-../Core/MCLIB/GeneralFunctions.c:13:7:gfDivideAvoidZero	32	static
-../Core/MCLIB/GeneralFunctions.c:24:7:gfWrapElectAngle	16	static
+../Core/MCLIB/GeneralFunctions.c:14:7:gfDivideAvoidZero	32	static
+../Core/MCLIB/GeneralFunctions.c:25:7:gfWrapTheta	16	static
+../Core/MCLIB/GeneralFunctions.c:35:6:gfOmega2Theta	32	static
+../Core/MCLIB/GeneralFunctions.c:43:7:gUpperLowerLimit	24	static

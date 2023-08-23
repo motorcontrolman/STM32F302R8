@@ -3,6 +3,7 @@
 "./Core/MCLIB/GlogalVariables.o"
 "./Core/MCLIB/SignalReadWrite.o"
 "./Core/MCLIB/SixsStep.o"
+"./Core/MCLIB/VectorControl.o"
 "./Core/Src/main.o"
 "./Core/Src/stm32f3xx_hal_msp.o"
 "./Core/Src/stm32f3xx_it.o"

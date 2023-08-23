@@ -6,6 +6,7 @@
  */
 
 #include <stdint.h>
+#include <math.h>
 #include "main.h"
 #include "GeneralFunctions.h"
 #include "GlogalVariables.h"
@@ -37,6 +38,12 @@ void gfOmega2Theta(float omega, float Ts, float *theta){
 	*theta += omega * Ts;
 	wrapTheta = gfWrapTheta(*theta);
 	*theta = wrapTheta;
+}
+
+float gUpperLowerLimit(float input, float Upper, float Lower){
+	if(input > Upper) input = Upper;
+	if(input < Lower) input = Lower;
+	return input;
 }
 
 

@@ -1,7 +1,10 @@
-VectorControl.c:27:6:VectorControlTasks	1
-VectorControl.c:45:13:uvw2ab	1
-VectorControl.c:50:13:ab2uvw	1
-VectorControl.c:56:13:ab2dq	1
-VectorControl.c:65:13:dq2ab	1
-VectorControl.c:74:13:Vuvw2Duty	1
-VectorControl.c:87:13:CurrentFbControl	1
+VectorControl.c:37:6:VectorControlTasks	2
+VectorControl.c:75:6:OpenLoopTasks	1
+VectorControl.c:92:13:uvw2ab	1
+VectorControl.c:97:13:ab2uvw	1
+VectorControl.c:103:13:ab2dq	1
+VectorControl.c:112:14:calcAmpFromVect	1
+VectorControl.c:121:14:calcModFromVamp	1
+VectorControl.c:128:13:dq2ab	1
+VectorControl.c:137:13:Vuvw2Duty	1
+VectorControl.c:155:13:CurrentFbControl	2
