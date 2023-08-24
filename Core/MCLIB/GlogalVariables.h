@@ -31,9 +31,9 @@
 #define SQRT3_DIV3			0.86602540378f
 #define DUTYUPPER			1.0f
 #define DUTYLOWER			-1.0f
-#define IU_ADOffSET			1966
-#define IV_ADOffSET			1977
-#define IW_ADOffSET			1969
+#define IU_ADOffSET			1938
+#define IV_ADOffSET			1952
+#define IW_ADOffSET			1944
 //#define AD2CURRENT			-0.00193586253f // for IHM07M1
 //#define AD2CURRENT			-0.014767822f // for DRV8302 tekito
 #define AD2CURRENT			-0.358844273 // for CQKIT

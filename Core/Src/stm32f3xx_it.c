@@ -253,7 +253,7 @@ void ADC1_IRQHandler(void)
 
 
 	  Idq_ref[0] = 0.0f;//gVolume * 2;//-0.0f;//gVolume;//0.05f;
-	  Idq_ref[1] = 10.0f * gVolume;
+	  Idq_ref[1] = 20.0f * gVolume;
 	/*// Speed Control
 	ErectFreqRef = 200.0f * gVolume;
 	ErectFreqErr = ErectFreqRef - gElectFreq;
@@ -284,7 +284,7 @@ void ADC1_IRQHandler(void)
 		gPosMode = POSMODE_HALL_PLL;
 		gDrvMode = DRVMODE_VECTORCONTROL;
 		leadAngleModeFlg = 1;
-		flgFB = 0;
+		flgFB = 1;
 	}
 
 	// MotorDrive
