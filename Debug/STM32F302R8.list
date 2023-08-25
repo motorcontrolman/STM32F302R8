@@ -27,23 +27,23 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   ALLOC
  11 .ARM.attributes 00000030  00000000  00000000  00020070  2**0
                   CONTENTS, READONLY
- 12 .debug_info   00013641  00000000  00000000  000200a0  2**0
+ 12 .debug_info   00013650  00000000  00000000  000200a0  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 13 .debug_abbrev 00002899  00000000  00000000  000336e1  2**0
+ 13 .debug_abbrev 00002899  00000000  00000000  000336f0  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 14 .debug_aranges 00001020  00000000  00000000  00035f80  2**3
+ 14 .debug_aranges 00001020  00000000  00000000  00035f90  2**3
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 15 .debug_ranges 00000ef0  00000000  00000000  00036fa0  2**3
+ 15 .debug_ranges 00000ef0  00000000  00000000  00036fb0  2**3
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 16 .debug_macro  0001d611  00000000  00000000  00037e90  2**0
+ 16 .debug_macro  0001d611  00000000  00000000  00037ea0  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 17 .debug_line   000155d2  00000000  00000000  000554a1  2**0
+ 17 .debug_line   000155d5  00000000  00000000  000554b1  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 18 .debug_str    000aca3b  00000000  00000000  0006aa73  2**0
+ 18 .debug_str    000aca47  00000000  00000000  0006aa86  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 19 .comment      00000050  00000000  00000000  001174ae  2**0
+ 19 .comment      00000050  00000000  00000000  001174cd  2**0
                   CONTENTS, READONLY
- 20 .debug_frame  000046e4  00000000  00000000  00117500  2**2
+ 20 .debug_frame  000046e4  00000000  00000000  00117520  2**2
                   CONTENTS, READONLY, DEBUGGING, OCTETS
 
 Disassembly of section .text:
@@ -2363,7 +2363,7 @@ static void CurrentFbControl(float *Igd_ref, float *Igd, float electAngVelo, flo
 
 void VectorControlTasks(float *Idq_ref, float theta, float electAngVelo, float *Iuvw, float Vdc, float twoDivVdc, uint8_t flgFB, float* Duty, int8_t* outputMode){
  80015f8:	b580      	push	{r7, lr}
- 80015fa:	b088      	sub	sp, #32
+ 80015fa:	b08a      	sub	sp, #40	; 0x28
  80015fc:	af00      	add	r7, sp, #0
  80015fe:	61f8      	str	r0, [r7, #28]
  8001600:	ed87 0a06 	vstr	s0, [r7, #24]
@@ -2374,187 +2374,189 @@ void VectorControlTasks(float *Idq_ref, float theta, float electAngVelo, float *
  8001612:	603b      	str	r3, [r7, #0]
  8001614:	4613      	mov	r3, r2
  8001616:	71fb      	strb	r3, [r7, #7]
-
+	float Vq_ref_open;
 	if ( flgFB == 0 ){
  8001618:	79fb      	ldrb	r3, [r7, #7]
  800161a:	2b00      	cmp	r3, #0
- 800161c:	d128      	bne.n	8001670 <VectorControlTasks+0x78>
-			OpenLoopTasks(gVolume * 12.24f, theta, Iuvw, twoDivVdc, Duty, outputMode);
- 800161e:	4b70      	ldr	r3, [pc, #448]	; (80017e0 <VectorControlTasks+0x1e8>)
- 8001620:	edd3 7a00 	vldr	s15, [r3]
- 8001624:	ed9f 7a6f 	vldr	s14, [pc, #444]	; 80017e4 <VectorControlTasks+0x1ec>
- 8001628:	ee67 7a87 	vmul.f32	s15, s15, s14
- 800162c:	6aba      	ldr	r2, [r7, #40]	; 0x28
- 800162e:	6839      	ldr	r1, [r7, #0]
- 8001630:	ed97 1a02 	vldr	s2, [r7, #8]
- 8001634:	6938      	ldr	r0, [r7, #16]
- 8001636:	edd7 0a06 	vldr	s1, [r7, #24]
- 800163a:	eeb0 0a67 	vmov.f32	s0, s15
- 800163e:	f000 f8f5 	bl	800182c <OpenLoopTasks>
+ 800161c:	d127      	bne.n	800166e <VectorControlTasks+0x76>
+		Vq_ref_open = Vdc * SQRT3DIV2_DIV2 * gVolume;
+ 800161e:	edd7 7a03 	vldr	s15, [r7, #12]
+ 8001622:	ed9f 7a6f 	vldr	s14, [pc, #444]	; 80017e0 <VectorControlTasks+0x1e8>
+ 8001626:	ee27 7a87 	vmul.f32	s14, s15, s14
+ 800162a:	4b6e      	ldr	r3, [pc, #440]	; (80017e4 <VectorControlTasks+0x1ec>)
+ 800162c:	edd3 7a00 	vldr	s15, [r3]
+ 8001630:	ee67 7a27 	vmul.f32	s15, s14, s15
+ 8001634:	edc7 7a09 	vstr	s15, [r7, #36]	; 0x24
+			OpenLoopTasks(Vq_ref_open, theta, Iuvw, twoDivVdc, Duty, outputMode);
+ 8001638:	6b3a      	ldr	r2, [r7, #48]	; 0x30
+ 800163a:	6839      	ldr	r1, [r7, #0]
+ 800163c:	ed97 1a02 	vldr	s2, [r7, #8]
+ 8001640:	6938      	ldr	r0, [r7, #16]
+ 8001642:	edd7 0a06 	vldr	s1, [r7, #24]
+ 8001646:	ed97 0a09 	vldr	s0, [r7, #36]	; 0x24
+ 800164a:	f000 f8ef 	bl	800182c <OpenLoopTasks>
 			sVdq[0] = 0.0f;
- 8001642:	4b69      	ldr	r3, [pc, #420]	; (80017e8 <VectorControlTasks+0x1f0>)
- 8001644:	f04f 0200 	mov.w	r2, #0
- 8001648:	601a      	str	r2, [r3, #0]
-			sVdq[1] = gVolume * 12.24f;
- 800164a:	4b65      	ldr	r3, [pc, #404]	; (80017e0 <VectorControlTasks+0x1e8>)
- 800164c:	edd3 7a00 	vldr	s15, [r3]
- 8001650:	ed9f 7a64 	vldr	s14, [pc, #400]	; 80017e4 <VectorControlTasks+0x1ec>
- 8001654:	ee67 7a87 	vmul.f32	s15, s15, s14
- 8001658:	4b63      	ldr	r3, [pc, #396]	; (80017e8 <VectorControlTasks+0x1f0>)
- 800165a:	edc3 7a01 	vstr	s15, [r3, #4]
+ 800164e:	4b66      	ldr	r3, [pc, #408]	; (80017e8 <VectorControlTasks+0x1f0>)
+ 8001650:	f04f 0200 	mov.w	r2, #0
+ 8001654:	601a      	str	r2, [r3, #0]
+			sVdq[1] = Vq_ref_open;
+ 8001656:	4a64      	ldr	r2, [pc, #400]	; (80017e8 <VectorControlTasks+0x1f0>)
+ 8001658:	6a7b      	ldr	r3, [r7, #36]	; 0x24
+ 800165a:	6053      	str	r3, [r2, #4]
 			sVdq_i[0] = 0.0f;
- 800165e:	4b63      	ldr	r3, [pc, #396]	; (80017ec <VectorControlTasks+0x1f4>)
- 8001660:	f04f 0200 	mov.w	r2, #0
- 8001664:	601a      	str	r2, [r3, #0]
+ 800165c:	4b63      	ldr	r3, [pc, #396]	; (80017ec <VectorControlTasks+0x1f4>)
+ 800165e:	f04f 0200 	mov.w	r2, #0
+ 8001662:	601a      	str	r2, [r3, #0]
 			sVdq_i[1] = 0.0f;
- 8001666:	4b61      	ldr	r3, [pc, #388]	; (80017ec <VectorControlTasks+0x1f4>)
- 8001668:	f04f 0200 	mov.w	r2, #0
- 800166c:	605a      	str	r2, [r3, #4]
+ 8001664:	4b61      	ldr	r3, [pc, #388]	; (80017ec <VectorControlTasks+0x1f4>)
+ 8001666:	f04f 0200 	mov.w	r2, #0
+ 800166a:	605a      	str	r2, [r3, #4]
 		sIdq_ref_1000[1] = Idq_ref[1] * 1000.0f;
 		sIdq_1000[0] = sIdq[0] * 1000.0f;
 		sIdq_1000[1] = sIdq[1] * 1000.0f;
 	}
 
 }
- 800166e:	e0b3      	b.n	80017d8 <VectorControlTasks+0x1e0>
+ 800166c:	e0b3      	b.n	80017d6 <VectorControlTasks+0x1de>
 		outputMode[0] = OUTPUTMODE_POSITIVE;
- 8001670:	6abb      	ldr	r3, [r7, #40]	; 0x28
- 8001672:	2201      	movs	r2, #1
- 8001674:	701a      	strb	r2, [r3, #0]
+ 800166e:	6b3b      	ldr	r3, [r7, #48]	; 0x30
+ 8001670:	2201      	movs	r2, #1
+ 8001672:	701a      	strb	r2, [r3, #0]
 		outputMode[1] = OUTPUTMODE_POSITIVE;
- 8001676:	6abb      	ldr	r3, [r7, #40]	; 0x28
- 8001678:	3301      	adds	r3, #1
- 800167a:	2201      	movs	r2, #1
- 800167c:	701a      	strb	r2, [r3, #0]
+ 8001674:	6b3b      	ldr	r3, [r7, #48]	; 0x30
+ 8001676:	3301      	adds	r3, #1
+ 8001678:	2201      	movs	r2, #1
+ 800167a:	701a      	strb	r2, [r3, #0]
 		outputMode[2] = OUTPUTMODE_POSITIVE;
- 800167e:	6abb      	ldr	r3, [r7, #40]	; 0x28
- 8001680:	3302      	adds	r3, #2
- 8001682:	2201      	movs	r2, #1
- 8001684:	701a      	strb	r2, [r3, #0]
+ 800167c:	6b3b      	ldr	r3, [r7, #48]	; 0x30
+ 800167e:	3302      	adds	r3, #2
+ 8001680:	2201      	movs	r2, #1
+ 8001682:	701a      	strb	r2, [r3, #0]
 		uvw2ab(gIuvw, sIab);
- 8001686:	495a      	ldr	r1, [pc, #360]	; (80017f0 <VectorControlTasks+0x1f8>)
- 8001688:	485a      	ldr	r0, [pc, #360]	; (80017f4 <VectorControlTasks+0x1fc>)
- 800168a:	f000 f92f 	bl	80018ec <uvw2ab>
+ 8001684:	495a      	ldr	r1, [pc, #360]	; (80017f0 <VectorControlTasks+0x1f8>)
+ 8001686:	485b      	ldr	r0, [pc, #364]	; (80017f4 <VectorControlTasks+0x1fc>)
+ 8001688:	f000 f930 	bl	80018ec <uvw2ab>
 		ab2dq(theta, sIab, sIdq);
- 800168e:	495a      	ldr	r1, [pc, #360]	; (80017f8 <VectorControlTasks+0x200>)
- 8001690:	4857      	ldr	r0, [pc, #348]	; (80017f0 <VectorControlTasks+0x1f8>)
- 8001692:	ed97 0a06 	vldr	s0, [r7, #24]
- 8001696:	f000 f9b3 	bl	8001a00 <ab2dq>
+ 800168c:	495a      	ldr	r1, [pc, #360]	; (80017f8 <VectorControlTasks+0x200>)
+ 800168e:	4858      	ldr	r0, [pc, #352]	; (80017f0 <VectorControlTasks+0x1f8>)
+ 8001690:	ed97 0a06 	vldr	s0, [r7, #24]
+ 8001694:	f000 f9b4 	bl	8001a00 <ab2dq>
 		CurrentFbControl(Idq_ref, sIdq, electAngVelo, Vdc, sVdq, &sVamp);
- 800169a:	4b58      	ldr	r3, [pc, #352]	; (80017fc <VectorControlTasks+0x204>)
- 800169c:	4a52      	ldr	r2, [pc, #328]	; (80017e8 <VectorControlTasks+0x1f0>)
- 800169e:	edd7 0a03 	vldr	s1, [r7, #12]
- 80016a2:	ed97 0a05 	vldr	s0, [r7, #20]
- 80016a6:	4954      	ldr	r1, [pc, #336]	; (80017f8 <VectorControlTasks+0x200>)
- 80016a8:	69f8      	ldr	r0, [r7, #28]
- 80016aa:	f000 fb07 	bl	8001cbc <CurrentFbControl>
+ 8001698:	4b58      	ldr	r3, [pc, #352]	; (80017fc <VectorControlTasks+0x204>)
+ 800169a:	4a53      	ldr	r2, [pc, #332]	; (80017e8 <VectorControlTasks+0x1f0>)
+ 800169c:	edd7 0a03 	vldr	s1, [r7, #12]
+ 80016a0:	ed97 0a05 	vldr	s0, [r7, #20]
+ 80016a4:	4954      	ldr	r1, [pc, #336]	; (80017f8 <VectorControlTasks+0x200>)
+ 80016a6:	69f8      	ldr	r0, [r7, #28]
+ 80016a8:	f000 fb08 	bl	8001cbc <CurrentFbControl>
 		sMod = calcModFromVamp(sVamp, gTwoDivVdc);
- 80016ae:	4b53      	ldr	r3, [pc, #332]	; (80017fc <VectorControlTasks+0x204>)
- 80016b0:	edd3 7a00 	vldr	s15, [r3]
- 80016b4:	4b52      	ldr	r3, [pc, #328]	; (8001800 <VectorControlTasks+0x208>)
- 80016b6:	ed93 7a00 	vldr	s14, [r3]
- 80016ba:	eef0 0a47 	vmov.f32	s1, s14
- 80016be:	eeb0 0a67 	vmov.f32	s0, s15
- 80016c2:	f000 fa07 	bl	8001ad4 <calcModFromVamp>
- 80016c6:	eef0 7a40 	vmov.f32	s15, s0
- 80016ca:	4b4e      	ldr	r3, [pc, #312]	; (8001804 <VectorControlTasks+0x20c>)
- 80016cc:	edc3 7a00 	vstr	s15, [r3]
+ 80016ac:	4b53      	ldr	r3, [pc, #332]	; (80017fc <VectorControlTasks+0x204>)
+ 80016ae:	edd3 7a00 	vldr	s15, [r3]
+ 80016b2:	4b53      	ldr	r3, [pc, #332]	; (8001800 <VectorControlTasks+0x208>)
+ 80016b4:	ed93 7a00 	vldr	s14, [r3]
+ 80016b8:	eef0 0a47 	vmov.f32	s1, s14
+ 80016bc:	eeb0 0a67 	vmov.f32	s0, s15
+ 80016c0:	f000 fa08 	bl	8001ad4 <calcModFromVamp>
+ 80016c4:	eef0 7a40 	vmov.f32	s15, s0
+ 80016c8:	4b4e      	ldr	r3, [pc, #312]	; (8001804 <VectorControlTasks+0x20c>)
+ 80016ca:	edc3 7a00 	vstr	s15, [r3]
 		sEdq[0] = sVdq[0] - Ra * sIdq[0] + La * electAngVelo * sIdq[1];
- 80016d0:	4b45      	ldr	r3, [pc, #276]	; (80017e8 <VectorControlTasks+0x1f0>)
- 80016d2:	ed93 7a00 	vldr	s14, [r3]
- 80016d6:	4b48      	ldr	r3, [pc, #288]	; (80017f8 <VectorControlTasks+0x200>)
- 80016d8:	edd3 7a00 	vldr	s15, [r3]
- 80016dc:	eddf 6a4a 	vldr	s13, [pc, #296]	; 8001808 <VectorControlTasks+0x210>
- 80016e0:	ee67 7aa6 	vmul.f32	s15, s15, s13
- 80016e4:	ee37 7a67 	vsub.f32	s14, s14, s15
- 80016e8:	edd7 7a05 	vldr	s15, [r7, #20]
- 80016ec:	eddf 6a47 	vldr	s13, [pc, #284]	; 800180c <VectorControlTasks+0x214>
- 80016f0:	ee67 6aa6 	vmul.f32	s13, s15, s13
- 80016f4:	4b40      	ldr	r3, [pc, #256]	; (80017f8 <VectorControlTasks+0x200>)
- 80016f6:	edd3 7a01 	vldr	s15, [r3, #4]
- 80016fa:	ee66 7aa7 	vmul.f32	s15, s13, s15
- 80016fe:	ee77 7a27 	vadd.f32	s15, s14, s15
- 8001702:	4b43      	ldr	r3, [pc, #268]	; (8001810 <VectorControlTasks+0x218>)
- 8001704:	edc3 7a00 	vstr	s15, [r3]
+ 80016ce:	4b46      	ldr	r3, [pc, #280]	; (80017e8 <VectorControlTasks+0x1f0>)
+ 80016d0:	ed93 7a00 	vldr	s14, [r3]
+ 80016d4:	4b48      	ldr	r3, [pc, #288]	; (80017f8 <VectorControlTasks+0x200>)
+ 80016d6:	edd3 7a00 	vldr	s15, [r3]
+ 80016da:	eddf 6a4b 	vldr	s13, [pc, #300]	; 8001808 <VectorControlTasks+0x210>
+ 80016de:	ee67 7aa6 	vmul.f32	s15, s15, s13
+ 80016e2:	ee37 7a67 	vsub.f32	s14, s14, s15
+ 80016e6:	edd7 7a05 	vldr	s15, [r7, #20]
+ 80016ea:	eddf 6a48 	vldr	s13, [pc, #288]	; 800180c <VectorControlTasks+0x214>
+ 80016ee:	ee67 6aa6 	vmul.f32	s13, s15, s13
+ 80016f2:	4b41      	ldr	r3, [pc, #260]	; (80017f8 <VectorControlTasks+0x200>)
+ 80016f4:	edd3 7a01 	vldr	s15, [r3, #4]
+ 80016f8:	ee66 7aa7 	vmul.f32	s15, s13, s15
+ 80016fc:	ee77 7a27 	vadd.f32	s15, s14, s15
+ 8001700:	4b43      	ldr	r3, [pc, #268]	; (8001810 <VectorControlTasks+0x218>)
+ 8001702:	edc3 7a00 	vstr	s15, [r3]
 		sEdq[1] = sVdq[1] - Ra * sIdq[1] - La * electAngVelo * sIdq[0];
- 8001708:	4b37      	ldr	r3, [pc, #220]	; (80017e8 <VectorControlTasks+0x1f0>)
- 800170a:	ed93 7a01 	vldr	s14, [r3, #4]
- 800170e:	4b3a      	ldr	r3, [pc, #232]	; (80017f8 <VectorControlTasks+0x200>)
- 8001710:	edd3 7a01 	vldr	s15, [r3, #4]
- 8001714:	eddf 6a3c 	vldr	s13, [pc, #240]	; 8001808 <VectorControlTasks+0x210>
- 8001718:	ee67 7aa6 	vmul.f32	s15, s15, s13
- 800171c:	ee37 7a67 	vsub.f32	s14, s14, s15
- 8001720:	edd7 7a05 	vldr	s15, [r7, #20]
- 8001724:	eddf 6a39 	vldr	s13, [pc, #228]	; 800180c <VectorControlTasks+0x214>
- 8001728:	ee67 6aa6 	vmul.f32	s13, s15, s13
- 800172c:	4b32      	ldr	r3, [pc, #200]	; (80017f8 <VectorControlTasks+0x200>)
- 800172e:	edd3 7a00 	vldr	s15, [r3]
- 8001732:	ee66 7aa7 	vmul.f32	s15, s13, s15
- 8001736:	ee77 7a67 	vsub.f32	s15, s14, s15
- 800173a:	4b35      	ldr	r3, [pc, #212]	; (8001810 <VectorControlTasks+0x218>)
- 800173c:	edc3 7a01 	vstr	s15, [r3, #4]
+ 8001706:	4b38      	ldr	r3, [pc, #224]	; (80017e8 <VectorControlTasks+0x1f0>)
+ 8001708:	ed93 7a01 	vldr	s14, [r3, #4]
+ 800170c:	4b3a      	ldr	r3, [pc, #232]	; (80017f8 <VectorControlTasks+0x200>)
+ 800170e:	edd3 7a01 	vldr	s15, [r3, #4]
+ 8001712:	eddf 6a3d 	vldr	s13, [pc, #244]	; 8001808 <VectorControlTasks+0x210>
+ 8001716:	ee67 7aa6 	vmul.f32	s15, s15, s13
+ 800171a:	ee37 7a67 	vsub.f32	s14, s14, s15
+ 800171e:	edd7 7a05 	vldr	s15, [r7, #20]
+ 8001722:	eddf 6a3a 	vldr	s13, [pc, #232]	; 800180c <VectorControlTasks+0x214>
+ 8001726:	ee67 6aa6 	vmul.f32	s13, s15, s13
+ 800172a:	4b33      	ldr	r3, [pc, #204]	; (80017f8 <VectorControlTasks+0x200>)
+ 800172c:	edd3 7a00 	vldr	s15, [r3]
+ 8001730:	ee66 7aa7 	vmul.f32	s15, s13, s15
+ 8001734:	ee77 7a67 	vsub.f32	s15, s14, s15
+ 8001738:	4b35      	ldr	r3, [pc, #212]	; (8001810 <VectorControlTasks+0x218>)
+ 800173a:	edc3 7a01 	vstr	s15, [r3, #4]
 		sAngleErr = atan2f(-1.0f * sEdq[0], sEdq[1]);
- 8001740:	4b33      	ldr	r3, [pc, #204]	; (8001810 <VectorControlTasks+0x218>)
- 8001742:	edd3 7a00 	vldr	s15, [r3]
- 8001746:	eef1 7a67 	vneg.f32	s15, s15
- 800174a:	4b31      	ldr	r3, [pc, #196]	; (8001810 <VectorControlTasks+0x218>)
- 800174c:	ed93 7a01 	vldr	s14, [r3, #4]
- 8001750:	eef0 0a47 	vmov.f32	s1, s14
- 8001754:	eeb0 0a67 	vmov.f32	s0, s15
- 8001758:	f006 fdda 	bl	8008310 <atan2f>
- 800175c:	eef0 7a40 	vmov.f32	s15, s0
- 8001760:	4b2c      	ldr	r3, [pc, #176]	; (8001814 <VectorControlTasks+0x21c>)
- 8001762:	edc3 7a00 	vstr	s15, [r3]
+ 800173e:	4b34      	ldr	r3, [pc, #208]	; (8001810 <VectorControlTasks+0x218>)
+ 8001740:	edd3 7a00 	vldr	s15, [r3]
+ 8001744:	eef1 7a67 	vneg.f32	s15, s15
+ 8001748:	4b31      	ldr	r3, [pc, #196]	; (8001810 <VectorControlTasks+0x218>)
+ 800174a:	ed93 7a01 	vldr	s14, [r3, #4]
+ 800174e:	eef0 0a47 	vmov.f32	s1, s14
+ 8001752:	eeb0 0a67 	vmov.f32	s0, s15
+ 8001756:	f006 fddb 	bl	8008310 <atan2f>
+ 800175a:	eef0 7a40 	vmov.f32	s15, s0
+ 800175e:	4b2d      	ldr	r3, [pc, #180]	; (8001814 <VectorControlTasks+0x21c>)
+ 8001760:	edc3 7a00 	vstr	s15, [r3]
 		dq2ab(theta, sVdq, sVab);
- 8001766:	492c      	ldr	r1, [pc, #176]	; (8001818 <VectorControlTasks+0x220>)
- 8001768:	481f      	ldr	r0, [pc, #124]	; (80017e8 <VectorControlTasks+0x1f0>)
- 800176a:	ed97 0a06 	vldr	s0, [r7, #24]
- 800176e:	f000 f9d1 	bl	8001b14 <dq2ab>
+ 8001764:	492c      	ldr	r1, [pc, #176]	; (8001818 <VectorControlTasks+0x220>)
+ 8001766:	4820      	ldr	r0, [pc, #128]	; (80017e8 <VectorControlTasks+0x1f0>)
+ 8001768:	ed97 0a06 	vldr	s0, [r7, #24]
+ 800176c:	f000 f9d2 	bl	8001b14 <dq2ab>
 		ab2uvw(sVab, sVuvw);
- 8001772:	492a      	ldr	r1, [pc, #168]	; (800181c <VectorControlTasks+0x224>)
- 8001774:	4828      	ldr	r0, [pc, #160]	; (8001818 <VectorControlTasks+0x220>)
- 8001776:	f000 f901 	bl	800197c <ab2uvw>
+ 8001770:	492a      	ldr	r1, [pc, #168]	; (800181c <VectorControlTasks+0x224>)
+ 8001772:	4829      	ldr	r0, [pc, #164]	; (8001818 <VectorControlTasks+0x220>)
+ 8001774:	f000 f902 	bl	800197c <ab2uvw>
 		Vuvw2Duty(twoDivVdc, sVuvw, Duty);
- 800177a:	6839      	ldr	r1, [r7, #0]
- 800177c:	4827      	ldr	r0, [pc, #156]	; (800181c <VectorControlTasks+0x224>)
- 800177e:	ed97 0a02 	vldr	s0, [r7, #8]
- 8001782:	f000 fa07 	bl	8001b94 <Vuvw2Duty>
+ 8001778:	6839      	ldr	r1, [r7, #0]
+ 800177a:	4828      	ldr	r0, [pc, #160]	; (800181c <VectorControlTasks+0x224>)
+ 800177c:	ed97 0a02 	vldr	s0, [r7, #8]
+ 8001780:	f000 fa08 	bl	8001b94 <Vuvw2Duty>
 		sIdq_ref_1000[0] = Idq_ref[0] * 1000.0f;
- 8001786:	69fb      	ldr	r3, [r7, #28]
- 8001788:	edd3 7a00 	vldr	s15, [r3]
- 800178c:	ed9f 7a24 	vldr	s14, [pc, #144]	; 8001820 <VectorControlTasks+0x228>
- 8001790:	ee67 7a87 	vmul.f32	s15, s15, s14
- 8001794:	4b23      	ldr	r3, [pc, #140]	; (8001824 <VectorControlTasks+0x22c>)
- 8001796:	edc3 7a00 	vstr	s15, [r3]
+ 8001784:	69fb      	ldr	r3, [r7, #28]
+ 8001786:	edd3 7a00 	vldr	s15, [r3]
+ 800178a:	ed9f 7a25 	vldr	s14, [pc, #148]	; 8001820 <VectorControlTasks+0x228>
+ 800178e:	ee67 7a87 	vmul.f32	s15, s15, s14
+ 8001792:	4b24      	ldr	r3, [pc, #144]	; (8001824 <VectorControlTasks+0x22c>)
+ 8001794:	edc3 7a00 	vstr	s15, [r3]
 		sIdq_ref_1000[1] = Idq_ref[1] * 1000.0f;
- 800179a:	69fb      	ldr	r3, [r7, #28]
- 800179c:	3304      	adds	r3, #4
- 800179e:	edd3 7a00 	vldr	s15, [r3]
- 80017a2:	ed9f 7a1f 	vldr	s14, [pc, #124]	; 8001820 <VectorControlTasks+0x228>
- 80017a6:	ee67 7a87 	vmul.f32	s15, s15, s14
- 80017aa:	4b1e      	ldr	r3, [pc, #120]	; (8001824 <VectorControlTasks+0x22c>)
- 80017ac:	edc3 7a01 	vstr	s15, [r3, #4]
+ 8001798:	69fb      	ldr	r3, [r7, #28]
+ 800179a:	3304      	adds	r3, #4
+ 800179c:	edd3 7a00 	vldr	s15, [r3]
+ 80017a0:	ed9f 7a1f 	vldr	s14, [pc, #124]	; 8001820 <VectorControlTasks+0x228>
+ 80017a4:	ee67 7a87 	vmul.f32	s15, s15, s14
+ 80017a8:	4b1e      	ldr	r3, [pc, #120]	; (8001824 <VectorControlTasks+0x22c>)
+ 80017aa:	edc3 7a01 	vstr	s15, [r3, #4]
 		sIdq_1000[0] = sIdq[0] * 1000.0f;
- 80017b0:	4b11      	ldr	r3, [pc, #68]	; (80017f8 <VectorControlTasks+0x200>)
- 80017b2:	edd3 7a00 	vldr	s15, [r3]
- 80017b6:	ed9f 7a1a 	vldr	s14, [pc, #104]	; 8001820 <VectorControlTasks+0x228>
- 80017ba:	ee67 7a87 	vmul.f32	s15, s15, s14
- 80017be:	4b1a      	ldr	r3, [pc, #104]	; (8001828 <VectorControlTasks+0x230>)
- 80017c0:	edc3 7a00 	vstr	s15, [r3]
+ 80017ae:	4b12      	ldr	r3, [pc, #72]	; (80017f8 <VectorControlTasks+0x200>)
+ 80017b0:	edd3 7a00 	vldr	s15, [r3]
+ 80017b4:	ed9f 7a1a 	vldr	s14, [pc, #104]	; 8001820 <VectorControlTasks+0x228>
+ 80017b8:	ee67 7a87 	vmul.f32	s15, s15, s14
+ 80017bc:	4b1a      	ldr	r3, [pc, #104]	; (8001828 <VectorControlTasks+0x230>)
+ 80017be:	edc3 7a00 	vstr	s15, [r3]
 		sIdq_1000[1] = sIdq[1] * 1000.0f;
- 80017c4:	4b0c      	ldr	r3, [pc, #48]	; (80017f8 <VectorControlTasks+0x200>)
- 80017c6:	edd3 7a01 	vldr	s15, [r3, #4]
- 80017ca:	ed9f 7a15 	vldr	s14, [pc, #84]	; 8001820 <VectorControlTasks+0x228>
- 80017ce:	ee67 7a87 	vmul.f32	s15, s15, s14
- 80017d2:	4b15      	ldr	r3, [pc, #84]	; (8001828 <VectorControlTasks+0x230>)
- 80017d4:	edc3 7a01 	vstr	s15, [r3, #4]
+ 80017c2:	4b0d      	ldr	r3, [pc, #52]	; (80017f8 <VectorControlTasks+0x200>)
+ 80017c4:	edd3 7a01 	vldr	s15, [r3, #4]
+ 80017c8:	ed9f 7a15 	vldr	s14, [pc, #84]	; 8001820 <VectorControlTasks+0x228>
+ 80017cc:	ee67 7a87 	vmul.f32	s15, s15, s14
+ 80017d0:	4b15      	ldr	r3, [pc, #84]	; (8001828 <VectorControlTasks+0x230>)
+ 80017d2:	edc3 7a01 	vstr	s15, [r3, #4]
 }
- 80017d8:	bf00      	nop
- 80017da:	3720      	adds	r7, #32
- 80017dc:	46bd      	mov	sp, r7
- 80017de:	bd80      	pop	{r7, pc}
- 80017e0:	200000b0 	.word	0x200000b0
- 80017e4:	4143d70a 	.word	0x4143d70a
+ 80017d6:	bf00      	nop
+ 80017d8:	3728      	adds	r7, #40	; 0x28
+ 80017da:	46bd      	mov	sp, r7
+ 80017dc:	bd80      	pop	{r7, pc}
+ 80017de:	bf00      	nop
+ 80017e0:	3f1cc471 	.word	0x3f1cc471
+ 80017e4:	200000b0 	.word	0x200000b0
  80017e8:	20000120 	.word	0x20000120
  80017ec:	20000128 	.word	0x20000128
  80017f0:	20000100 	.word	0x20000100

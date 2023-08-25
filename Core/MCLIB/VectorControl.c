@@ -35,11 +35,12 @@ static void Vuvw2Duty(float twoDivVdc, float *Vuvw, float *Duty);
 static void CurrentFbControl(float *Igd_ref, float *Igd, float electAngVelo, float Vdc, float *Vgd, float* Vamp);
 
 void VectorControlTasks(float *Idq_ref, float theta, float electAngVelo, float *Iuvw, float Vdc, float twoDivVdc, uint8_t flgFB, float* Duty, int8_t* outputMode){
-
+	float Vq_ref_open;
 	if ( flgFB == 0 ){
-			OpenLoopTasks(gVolume * 12.24f, theta, Iuvw, twoDivVdc, Duty, outputMode);
+		Vq_ref_open = Vdc * SQRT3DIV2_DIV2 * gVolume;
+			OpenLoopTasks(Vq_ref_open, theta, Iuvw, twoDivVdc, Duty, outputMode);
 			sVdq[0] = 0.0f;
-			sVdq[1] = gVolume * 12.24f;
+			sVdq[1] = Vq_ref_open;
 			sVdq_i[0] = 0.0f;
 			sVdq_i[1] = 0.0f;
 		}
