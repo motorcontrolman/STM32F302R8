@@ -25,14 +25,14 @@ float sMod;
 float sEdq[2];
 float sAngleErr;
 
-static void uvw2ab(float *uvw, float *ab);
-static void ab2uvw(float *ab, float *uvw);
-static void ab2dq(float theta, float *ab, float *dq);
-static void dq2ab(float theta, float *dq, float *ab);
-static float calcAmpFromVect(float* Vect);
-static float calcModFromVamp(float Vamp, float twoDivVdc);
-static void Vuvw2Duty(float twoDivVdc, float *Vuvw, float *Duty);
-static void CurrentFbControl(float *Igd_ref, float *Igd, float electAngVelo, float Vdc, float *Vgd, float* Vamp);
+static inline void uvw2ab(float *uvw, float *ab);
+static inline void ab2uvw(float *ab, float *uvw);
+static inline void ab2dq(float theta, float *ab, float *dq);
+static inline void dq2ab(float theta, float *dq, float *ab);
+static inline float calcAmpFromVect(float* Vect);
+static inline float calcModFromVamp(float Vamp, float twoDivVdc);
+static inline void Vuvw2Duty(float twoDivVdc, float *Vuvw, float *Duty);
+static inline void CurrentFbControl(float *Igd_ref, float *Igd, float electAngVelo, float Vdc, float *Vgd, float* Vamp);
 
 void VectorControlTasks(float *Idq_ref, float theta, float electAngVelo, float *Iuvw, float Vdc, float twoDivVdc, uint8_t flgFB, float* Duty, int8_t* outputMode){
 	float Vq_ref_open;

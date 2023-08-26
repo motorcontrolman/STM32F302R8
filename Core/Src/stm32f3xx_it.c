@@ -229,6 +229,7 @@ void ADC1_IRQHandler(void)
 	float ErectFreqErr;
 	float theta_tmp;
 	float electAngVelo_tmp;
+	uint8_t voltageMode_tmp;
 	float Idq_ref[2];
 	uint8_t leadAngleModeFlg;
 	uint8_t flgFB;
@@ -299,7 +300,8 @@ void ADC1_IRQHandler(void)
 	}
 	else{
 		gDutyRef = 0.0f;
-		sixStepTasks(gDutyRef, leadAngleModeFlg, 0.0f, &theta_tmp, &electAngVelo_tmp, gDuty, outputMode);
+		//sixStepTasks(gDutyRef, leadAngleModeFlg, 0.0f, &theta_tmp, &electAngVelo_tmp, gDuty, outputMode);
+		calcElectAngle(leadAngleModeFlg, &voltageMode_tmp, &theta_tmp, &electAngVelo_tmp);
 		gTheta = theta_tmp;
 		gElectAngVelo = electAngVelo_tmp;
 		//gTheta_DAC = 1000;//(gTheta + PI) * ONEDIVTWOPI * 4096;

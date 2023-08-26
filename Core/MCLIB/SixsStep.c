@@ -15,15 +15,14 @@
 #include "ControlFunctions.h"
 
 // Static Variables
-static int8_t sOutputMode[3];
+int8_t sOutputMode[3];
 uint8_t sVoltageMode;
 uint8_t sVoltageMode_pre;
 uint16_t sNoInputCaptureCnt = 0;
 uint8_t sVoltageModeChangedFlg;
-uint8_t sVoltageModeModify;
 int8_t sRotDir = 0;
-uint8_t sLeadAngleModeFlg;
-uint8_t sLeadAngleModeFlg_pre;
+uint8_t sFlgPLL;
+uint8_t sFlgPLL_pre;
 
 
 float sElectAngleActual;
@@ -34,19 +33,57 @@ float sElectAngVeloEstimate;
 float sElectAngleErr;
 
 // Static Functons
-static uint8_t calcVoltageMode(uint8_t* Hall);
-static void calcRotDirFromVoltageMode(uint8_t voltageMode_pre, uint8_t voltageMode, int8_t* rotDir);
-static float calcElectAngleFromVoltageMode(uint8_t voltageMode, int8_t rotDir);
-static uint8_t calcLeadAngleModeFlg(void);
-static uint8_t calcVoltageModeFromElectAngle(float electAngle);
-static void calcOutputMode(uint8_t voltageMode, int8_t* outputMode);
-static void calcDuty(int8_t* outputMode, float DutyRef, float* Duty);
+static inline uint8_t calcVoltageMode(uint8_t* Hall);
+static inline void calcRotDirFromVoltageMode(uint8_t voltageMode_pre, uint8_t voltageMode, int8_t* rotDir);
+static inline float calcElectAngleFromVoltageMode(uint8_t voltageMode, int8_t rotDir);
+static inline uint8_t calcLeadAngleModeFlg(void);
+static inline uint8_t calcVoltageModeFromElectAngle(float electAngle);
+static inline void calcOutputMode(uint8_t voltageMode, int8_t* outputMode);
+static inline void calcDuty(int8_t* outputMode, float DutyRef, float* Duty);
 
+/*
+void sixStepTasks(float DutyRef, uint8_t voltageMode, uint8_t leadAngleModeFlg, float electAngle, float leadAngle, float* Duty, int8_t* outputMode){
+
+	uint8_t voltageModeModify;
+	float electAnglePrusLeadAngle;
+
+	calcElectAngle(leadAngleModeFlg, sVoltageMode, electAngle, electAngVelo)
+	sixStepDrive(DutyRef, sVoltageMode, leadAngleModeFlg, electAngle, leadAngle, Duty, outputMode)
+
+}
+*/
 
 // input DutyRef minus1-1, output Duty 0-1
-void sixStepTasks(float DutyRef, uint8_t leadAngleModeFlg, float leadAngle, float* Theta, float* electAngVelo, float* Duty, int8_t* outputMode){
+void sixStepDrive(float DutyRef, uint8_t voltageMode, uint8_t leadAngleModeFlg, float electAngle, float leadAngle, float* Duty, int8_t* outputMode){
 
+	uint8_t voltageModeModify;
 	float electAnglePrusLeadAngle;
+
+	if(leadAngleModeFlg == 1){
+		electAnglePrusLeadAngle = electAngle + leadAngle;
+		electAnglePrusLeadAngle = gfWrapTheta(electAnglePrusLeadAngle);
+
+		voltageModeModify = calcVoltageModeFromElectAngle(electAnglePrusLeadAngle);
+		calcOutputMode(voltageModeModify, outputMode);
+	}
+
+	else{
+		// Control without Electrical Angle ( Use Only Hall Signals )
+		calcOutputMode(voltageMode, outputMode);
+	}
+
+	// Output Voltage
+	calcDuty(outputMode, DutyRef, Duty);
+
+	// Output Static Signals
+	outputMode[0] = sOutputMode[0];
+	outputMode[1] = sOutputMode[1];
+	outputMode[2] = sOutputMode[2];
+
+}
+
+void calcElectAngle(uint8_t flgPLL, uint8_t voltageMode, float* electAngle, float* electAngVelo){
+
 	float wc_PLL;
 	float Kp_PLL;
 	float Ki_PLL;
@@ -74,10 +111,8 @@ void sixStepTasks(float DutyRef, uint8_t leadAngleModeFlg, float leadAngle, floa
 		gElectFreq = 0;
 
 
-	// Calculate PLL Gain based on Electrical Frequency
-	wc_PLL = sElectAngVeloEstimate * 0.5f;//gElectFreq * 0.5f * TWOPI;
-	//if (wc_PLL > 6000)
-	//	wc_PLL = 6000;
+	// Calculate PLL Gain based on Electrical Angle Velocity
+	wc_PLL = sElectAngVeloEstimate * 0.5f;
 	Ts_PLL = 1.0f / (sElectAngVeloEstimate * ONEDIVTWOPI * 6.0f);
 	Kp_PLL = wc_PLL;
 	Ki_PLL = 0.2f * wc_PLL * wc_PLL * Ts_PLL;
@@ -87,6 +122,7 @@ void sixStepTasks(float DutyRef, uint8_t leadAngleModeFlg, float leadAngle, floa
 	sVoltageMode_pre = sVoltageMode;
 	sVoltageMode = calcVoltageMode(gHall);
 
+
 	// Hold & Read Actual Electrical Angle Based on Voltage Mode (Consider with Rotational Direction)
 	sElectAngleActual_pre = sElectAngleActual;
 	calcRotDirFromVoltageMode(sVoltageMode_pre, sVoltageMode, &sRotDir);
@@ -94,13 +130,13 @@ void sixStepTasks(float DutyRef, uint8_t leadAngleModeFlg, float leadAngle, floa
 	sElectAngleActual = gfWrapTheta(sElectAngleActual);
 
 	// Hold & Calculate Whether to Use Lead Angle Control Mode.
-	sLeadAngleModeFlg_pre = sLeadAngleModeFlg;
-	sLeadAngleModeFlg = leadAngleModeFlg;//calcLeadAngleModeFlg();
+	sFlgPLL_pre = sFlgPLL;
+	sFlgPLL = flgPLL;
 
-	if(sLeadAngleModeFlg == 1){
+	if(flgPLL == 1){
 		// Six Step Control using Electrical Angle Consider with Lead Angle
 		// Reset EstOmega
-		if ( sLeadAngleModeFlg_pre == 0 ){
+		if ( sFlgPLL_pre == 0 ){
 			sElectAngVeloEstimate = gElectFreq * TWOPI;
 			sIntegral_ElectAngleErr_Ki = sElectAngVeloEstimate;
 			sElectAngleEstimate = sElectAngleActual;
@@ -109,11 +145,6 @@ void sixStepTasks(float DutyRef, uint8_t leadAngleModeFlg, float leadAngle, floa
 		// Estimate Electrical Angle & Velocity using PLL
 		sElectAngleEstimate += sElectAngVeloEstimate * CARRIERCYCLE;
 		sElectAngleEstimate = gfWrapTheta(sElectAngleEstimate);
-
-		electAnglePrusLeadAngle = sElectAngleEstimate + leadAngle;
-		electAnglePrusLeadAngle = gfWrapTheta(electAnglePrusLeadAngle);
-
-		sVoltageModeModify = calcVoltageModeFromElectAngle(electAnglePrusLeadAngle);
 
 		if( sElectAngleActual != sElectAngleActual_pre){
 			sElectAngleErr = sElectAngleActual - sElectAngleEstimate;
@@ -124,28 +155,15 @@ void sixStepTasks(float DutyRef, uint8_t leadAngleModeFlg, float leadAngle, floa
 			//PLL
 			sElectAngVeloEstimate = cfPhaseLockedLoop(sElectAngleErr, Kp_PLL, Ki_PLL, &sIntegral_ElectAngleErr_Ki);
 		}
-
-		calcOutputMode(sVoltageModeModify, sOutputMode);
-
 	}
-
 	else{
-		// Control without Electrical Angle ( Use Only Hall Signals )
-		calcOutputMode(sVoltageMode, sOutputMode);
 		sElectAngleEstimate = sElectAngleActual;
 		sElectAngVeloEstimate = gElectFreq * TWOPI;
 	}
 
-	// Output Voltage
-	calcDuty(sOutputMode, DutyRef, Duty);
-
-	// Output Static Signals
-	outputMode[0] = sOutputMode[0];
-	outputMode[1] = sOutputMode[1];
-	outputMode[2] = sOutputMode[2];
-
-	*Theta = sElectAngleEstimate;
+	*electAngle = sElectAngleEstimate;
 	*electAngVelo = sElectAngVeloEstimate;
+
 
 }
 
