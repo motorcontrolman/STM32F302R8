@@ -15,22 +15,22 @@
 #include "ControlFunctions.h"
 
 // Static Variables
-int8_t sOutputMode[3];
-uint8_t sVoltageMode;
-uint8_t sVoltageMode_pre;
-uint16_t sNoInputCaptureCnt = 0;
-uint8_t sVoltageModeChangedFlg;
-int8_t sRotDir = 0;
-uint8_t sFlgPLL;
-uint8_t sFlgPLL_pre;
+static int8_t sOutputMode[3];
+static uint8_t sVoltageMode;
+static uint8_t sVoltageMode_pre;
+static uint16_t sNoInputCaptureCnt = 0;
+static uint8_t sVoltageModeChangedFlg;
+static int8_t sRotDir = 0;
+static uint8_t sFlgPLL;
+static uint8_t sFlgPLL_pre;
 
 
-float sElectAngleActual;
-float sElectAngleActual_pre;
-float sElectAngleEstimate = 0.0f;
-float sIntegral_ElectAngleErr_Ki = 0.0f;
-float sElectAngVeloEstimate;
-float sElectAngleErr;
+static float sElectAngleActual;
+static float sElectAngleActual_pre;
+static float sElectAngleEstimate = 0.0f;
+static float sIntegral_ElectAngleErr_Ki = 0.0f;
+static float sElectAngVeloEstimate;
+static float sElectAngleErr;
 
 // Static Functons
 static inline uint8_t calcVoltageMode(uint8_t* Hall);

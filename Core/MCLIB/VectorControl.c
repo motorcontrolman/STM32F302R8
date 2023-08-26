@@ -12,18 +12,18 @@
 #include "GeneralFunctions.h"
 #include "VectorControl.h"
 
-float sIab[2];
-float sIdq[2];
-float sIdq_ref_1000[2];
-float sIdq_1000[2];
-float sVdq[2];
-float sVdq_i[2];
-float sVab[2];
-float sVuvw[3];
-float sVamp;
-float sMod;
-float sEdq[2];
-float sAngleErr;
+static float sIab[2];
+static float sIdq[2];
+static float sIdq_ref_1000[2];
+static float sIdq_1000[2];
+static float sVdq[2];
+static float sVdq_i[2];
+static float sVab[2];
+static float sVuvw[3];
+static float sVamp;
+static float sMod;
+static float sEdq[2];
+static float sAngleErr;
 
 static inline void uvw2ab(float *uvw, float *ab);
 static inline void ab2uvw(float *ab, float *uvw);

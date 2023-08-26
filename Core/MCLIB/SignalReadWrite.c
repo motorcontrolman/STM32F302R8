@@ -15,7 +15,7 @@
 uint16_t Bemf_AD[3];
 
 uint8_t readButton1(void){
-	uint8_t B1;
+	volatile uint8_t B1;
 
 	B1 = HAL_GPIO_ReadPin(B1_GPIO_Port, B1_Pin);
 	return B1;
