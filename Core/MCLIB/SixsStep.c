@@ -15,7 +15,7 @@
 #include "ControlFunctions.h"
 
 // Static Variables
-int8_t sOutputMode[3];
+static int8_t sOutputMode[3];
 uint8_t sVoltageMode;
 uint8_t sVoltageMode_pre;
 uint16_t sNoInputCaptureCnt = 0;
