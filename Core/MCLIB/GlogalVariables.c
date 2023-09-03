@@ -30,7 +30,7 @@ int8_t gOutputMode[3];
 float gDutyRef = 0;
 float gDuty[3];
 
-uint8_t gPosMode;
-uint8_t gDrvMode;
-uint16_t gInitCnt = 0;
+// uint8_t gPosMode;
+// uint8_t gDrvMode;
+// uint16_t gInitCnt = 0;
 

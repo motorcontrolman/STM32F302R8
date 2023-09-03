@@ -32,7 +32,7 @@ static float sIntegral_ElectAngleErr_Ki = 0.0f;
 static float sElectAngVeloEstimate;
 static float sElectAngleErr;
 
-// Static Functons
+// Static Functions
 static inline uint8_t calcVoltageMode(uint8_t* Hall);
 static inline void calcRotDirFromVoltageMode(uint8_t voltageMode_pre, uint8_t voltageMode, int8_t* rotDir);
 static inline float calcElectAngleFromVoltageMode(uint8_t voltageMode, int8_t rotDir);
@@ -82,7 +82,7 @@ void sixStepDrive(float DutyRef, uint8_t voltageMode, uint8_t leadAngleModeFlg, 
 
 }
 
-void calcElectAngle(uint8_t flgPLL, uint8_t voltageMode, float* electAngle, float* electAngVelo){
+void calcElectAngle(uint8_t flgPLL, float* electAngle, float* electAngVelo){
 
 	float wc_PLL;
 	float Kp_PLL;

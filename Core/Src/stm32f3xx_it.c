@@ -23,10 +23,9 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "GlogalVariables.h"
-#include "SixsStep.h"
-#include "VectorControl.h"
 #include "SignalReadWrite.h"
 #include "GeneralFunctions.h"
+#include "Sequence.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -223,20 +222,12 @@ void DMA1_Channel1_IRQHandler(void)
   */
 void ADC1_IRQHandler(void)
 {
-  /* USER CODE BEGIN ADC1_IRQn 0 */
-	int8_t rotDir;
-	float ErectFreqRef = 100.0f;
-	float ErectFreqErr;
-	float theta_tmp;
-	float electAngVelo_tmp;
-	uint8_t voltageMode_tmp;
-	float Idq_ref[2];
-	uint8_t leadAngleModeFlg;
-	uint8_t flgFB;
-  int8_t outputMode[3];
-  /* USER CODE END ADC1_IRQn 0 */
-  HAL_ADC_IRQHandler(&hadc1);
-  /* USER CODE BEGIN ADC1_IRQn 1 */
+	/* USER CODE BEGIN ADC1_IRQn 0 */
+
+	/* USER CODE END ADC1_IRQn 0 */
+	HAL_ADC_IRQHandler(&hadc1);
+
+	/* USER CODE BEGIN ADC1_IRQn 1 */
 	HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
 
 	//read IO signals
@@ -246,86 +237,8 @@ void ADC1_IRQHandler(void)
 	gVdc = readVdc();
 	gTwoDivVdc = gfDivideAvoidZero(2.0f, gVdc, 1.0f);
 
-	//DutyRef Calculation
-	//if ( gButton1 == 1 )
-	  rotDir = 1;
-	//else
-	//  rotDir = -1;
-
-
-	  Idq_ref[0] = 0.0f;//gVolume * 2;//-0.0f;//gVolume;//0.05f;
-	  Idq_ref[1] = 20.0f * gVolume;
-	/*// Speed Control
-	ErectFreqRef = 200.0f * gVolume;
-	ErectFreqErr = ErectFreqRef - gElectFreq;
-	gDutyRef += ErectFreqErr * 0.0000001f;
-	*/
-
 	// Sequence Control
-	if(gInitCnt < 500){
-		gInitCnt++;
-		gPosMode = POSMODE_HALL;
-		gDrvMode = DRVMODE_OFF;
-		leadAngleModeFlg = 0;
-		flgFB = 0;
-	}
-	else if (gElectFreq < 10.0f){
-		gPosMode = POSMODE_HALL;
-		gDrvMode = DRVMODE_OPENLOOP;
-		leadAngleModeFlg = 0;
-		flgFB = 0;
-	}
-	else if(gElectFreq < 20.0f){
-		gPosMode = POSMODE_HALL_PLL;
-		gDrvMode = DRVMODE_OPENLOOP;
-		leadAngleModeFlg = 1;
-		flgFB = 0;
-	}
-	else{
-		gPosMode = POSMODE_HALL_PLL;
-		gDrvMode = DRVMODE_VECTORCONTROL;
-		leadAngleModeFlg = 1;
-		flgFB = 1;
-	}
-
-	// MotorDrive
-	if(gDrvMode == DRVMODE_OFF){
-		outputMode[0] = OUTPUTMODE_OPEN;
-		outputMode[1] = OUTPUTMODE_OPEN;
-		outputMode[2] = OUTPUTMODE_OPEN;
-		gDuty[0] = 0.0f;
-		gDuty[1] = 0.0f;
-		gDuty[2] = 0.0f;
-
-	}
-	else{
-		gDutyRef = 0.0f;
-		//sixStepTasks(gDutyRef, leadAngleModeFlg, 0.0f, &theta_tmp, &electAngVelo_tmp, gDuty, outputMode);
-		calcElectAngle(leadAngleModeFlg, &voltageMode_tmp, &theta_tmp, &electAngVelo_tmp);
-		gTheta = theta_tmp;
-		gElectAngVelo = electAngVelo_tmp;
-		//gTheta_DAC = 1000;//(gTheta + PI) * ONEDIVTWOPI * 4096;
-
-		//write IO signals
-		//gTheta = gTheta + 2000.0f * gVolume * CARRIERCYCLE;
-		//gTheta = gfWrapTheta(gTheta);
-
-		VectorControlTasks(Idq_ref, gTheta, gElectAngVelo, gIuvw, gVdc, gTwoDivVdc, flgFB, gDuty, outputMode);
-		//OpenLoopTasks(0.75f, gTheta, gIuvw, gTwoDivVdc, gDuty, outputMode);
-	}
-
-	writeOutputMode(outputMode);
-	writeDuty(gDuty);
-
-
-
-
-	//if ( gButton1 == 0 )
-	//	OpenLoopTasks(gDutyRef * 8.0f, gTheta, gIuvw, gTwoDivVdc, gDuty, outputMode);
-	//else
-
-//
-//VectorControlTasks(Idq_ref, gTheta, gIuvw, gVdc, gDuty);
+	Sequence();
 
 	HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
 

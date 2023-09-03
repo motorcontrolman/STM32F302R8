@@ -14,6 +14,8 @@
 
 static float sIab[2];
 static float sIdq[2];
+static float sIq_LPF = 0;
+static float sIq_ref_LPF = 0;
 static float sIdq_ref_1000[2];
 static float sIdq_1000[2];
 static float sVdq[2];
@@ -43,6 +45,7 @@ void VectorControlTasks(float *Idq_ref, float theta, float electAngVelo, float *
 			sVdq[1] = Vq_ref_open;
 			sVdq_i[0] = 0.0f;
 			sVdq_i[1] = 0.0f;
+			sIq_ref_LPF = sIq_LPF;
 		}
 	else{
 
@@ -54,6 +57,8 @@ void VectorControlTasks(float *Idq_ref, float theta, float electAngVelo, float *
 		uvw2ab(gIuvw, sIab);
 		ab2dq(theta, sIab, sIdq);
 
+		gLPF(Idq_ref[1], 62.8f, CARRIERCYCLE, &sIq_ref_LPF);
+		Idq_ref[1] = sIq_ref_LPF; // zanteisyori
 		CurrentFbControl(Idq_ref, sIdq, electAngVelo, Vdc, sVdq, &sVamp);
 		sMod = calcModFromVamp(sVamp, gTwoDivVdc);
 
@@ -70,6 +75,8 @@ void VectorControlTasks(float *Idq_ref, float theta, float electAngVelo, float *
 		sIdq_1000[0] = sIdq[0] * 1000.0f;
 		sIdq_1000[1] = sIdq[1] * 1000.0f;
 	}
+
+	gLPF(sIdq[1], 125.6f, CARRIERCYCLE, &sIq_LPF);
 
 }
 

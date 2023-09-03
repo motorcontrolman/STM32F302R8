@@ -31,23 +31,6 @@
 #define SQRT3_DIV3			0.86602540378f
 #define DUTYUPPER			1.0f
 #define DUTYLOWER			-1.0f
-#define IU_ADOffSET			1938
-#define IV_ADOffSET			1952
-#define IW_ADOffSET			1944
-//#define AD2CURRENT			-0.00193586253f // for IHM07M1
-//#define AD2CURRENT			-0.014767822f // for DRV8302 tekito
-#define AD2CURRENT			-0.358844273 // for CQKIT
-//#define AD2VOLTAGE			0.0154305f; // for IHM07M1 1/(9.31/(9.31+169)*4096/3.3V)
-#define AD2VOLTAGE			0.025210084f; // for CQKIT
-
-
-#define POSMODE_HALL				0
-#define POSMODE_HALL_PLL			1
-#define POSMODE_SENSORLESS			2
-#define DRVMODE_OFF					0
-#define DRVMODE_SIXSTEP				1
-#define DRVMODE_OPENLOOP			2
-#define DRVMODE_VECTORCONTROL		3
 
 
 // for NIDEC Motor
@@ -57,6 +40,7 @@
 
 // for CQKit Motor
 #define Ra					0.027f
+#define ONEDIVRa			1/Ra
 #define La					0.000035f
 #define Ke					9.36E-03f
 

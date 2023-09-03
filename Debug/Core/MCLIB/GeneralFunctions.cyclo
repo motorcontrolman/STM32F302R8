@@ -2,3 +2,5 @@ GeneralFunctions.c:14:7:gfDivideAvoidZero	5
 GeneralFunctions.c:25:7:gfWrapTheta	3
 GeneralFunctions.c:35:6:gfOmega2Theta	1
 GeneralFunctions.c:43:7:gUpperLowerLimit	3
+GeneralFunctions.c:49:6:gOffDuty	1
+GeneralFunctions.c:58:6:gLPF	1

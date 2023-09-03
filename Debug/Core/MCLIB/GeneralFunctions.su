@@ -2,3 +2,5 @@
 ../Core/MCLIB/GeneralFunctions.c:25:7:gfWrapTheta	16	static
 ../Core/MCLIB/GeneralFunctions.c:35:6:gfOmega2Theta	32	static
 ../Core/MCLIB/GeneralFunctions.c:43:7:gUpperLowerLimit	24	static
+../Core/MCLIB/GeneralFunctions.c:49:6:gOffDuty	16	static
+../Core/MCLIB/GeneralFunctions.c:58:6:gLPF	32	static
