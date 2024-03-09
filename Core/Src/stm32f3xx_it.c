@@ -26,6 +26,8 @@
 #include "SixsStep.h"
 #include "VectorControl.h"
 #include "SignalReadWrite.h"
+#include "GeneralFunctions.h"
+#include "Sequence.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -226,47 +228,29 @@ void ADC1_IRQHandler(void)
 	int8_t rotDir;
 	float ErectFreqRef = 100.0f;
 	float ErectFreqErr;
-  uint8_t outputMode[3];
+	uint8_t voltageMode_tmp;
+	float theta_tmp;
+	float electAngVelo_tmp;
+	float Idq_ref[2];
+	uint8_t leadAngleModeFlg;
+	uint8_t flgFB;
+	int8_t outputMode[3];
   /* USER CODE END ADC1_IRQn 0 */
   HAL_ADC_IRQHandler(&hadc1);
   /* USER CODE BEGIN ADC1_IRQn 1 */
+
 	HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
 
 	//read IO signals
 	gButton1 = readButton1();
 	gVolume = readVolume();
-  readCurrent(gIuvw_AD, gIuvw);
+	readCurrent(gIuvw_AD, gIuvw);
+
 	gVdc = readVdc();
+	gTwoDivVdc = gfDivideAvoidZero(2.0f, gVdc, 1.0f);
 
-	//DutyRef Calculation
-	if ( gButton1 == 1 )
-	  rotDir = 1;
-	else
-	  rotDir = -1;
-
-
-	/*// Speed Control
-	ErectFreqRef = 200.0f * gVolume;
-	ErectFreqErr = ErectFreqRef - gElectFreq;
-	gDutyRef += ErectFreqErr * 0.0000001f;
-	*/
-
-
-	gDutyRef = (float)rotDir * gVolume;
-	if (gDutyRef > 1.0f) gDutyRef = 1.0f;
-	if (gDutyRef < -1.0f) gDutyRef = -1.0f;
-
-	//gDutyRef = 0.5f;
-
-	//Input DutyRef, Lead Angle Output Duty
-	sixStepTasks(gDutyRef, 0.0f, &gTheta, gDuty, outputMode);
-  	//write IO signals
-	writeOutputMode(outputMode);
-	writeDuty(gDuty);
-  
-  //OpenLoopTasks(gDutyRef, 100.0f, gIuvw, gVdc, gDuty);
-  //
-  //VectorControlTasks(Idq_ref, gTheta, gIuvw, gVdc, gDuty);
+	// Sequence Control
+	Sequence();
 
 	HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
   /* USER CODE END ADC1_IRQn 1 */

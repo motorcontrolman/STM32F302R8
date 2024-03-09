@@ -1,9 +1,9 @@
-SignalReadWrite.c:18:9:readButton1	1
-SignalReadWrite.c:25:10:readInputCaptureCnt	1
-SignalReadWrite.c:35:7:readTimeInterval	2
-SignalReadWrite.c:57:7:readVolume	1
+SignalReadWrite.c:17:9:readButton1	1
+SignalReadWrite.c:24:10:readInputCaptureCnt	1
+SignalReadWrite.c:34:7:readTimeInterval	2
+SignalReadWrite.c:56:7:readVolume	2
 SignalReadWrite.c:68:7:readVdc	1
 SignalReadWrite.c:76:6:readCurrent	1
 SignalReadWrite.c:86:6:readHallSignal	1
-SignalReadWrite.c:93:6:writeOutputMode	4
-SignalReadWrite.c:112:6:writeDuty	1
+SignalReadWrite.c:104:6:writeOutputMode	4
+SignalReadWrite.c:123:6:writeDuty	1

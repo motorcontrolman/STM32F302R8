@@ -6,6 +6,7 @@
  */
 
 #include <stdint.h>
+#include <math.h>
 #include "main.h"
 #include "GeneralFunctions.h"
 #include "GlogalVariables.h"
@@ -37,6 +38,54 @@ void gfOmega2Theta(float omega, float Ts, float *theta){
 	*theta += omega * Ts;
 	wrapTheta = gfWrapTheta(*theta);
 	*theta = wrapTheta;
+}
+
+float gUpperLowerLimit(float input, float Upper, float Lower){
+	if(input > Upper) input = Upper;
+	if(input < Lower) input = Lower;
+	return input;
+}
+
+void gOffDuty(float* Duty, int8_t* outputMode){
+	outputMode[0] = OUTPUTMODE_OPEN;
+	outputMode[1] = OUTPUTMODE_OPEN;
+	outputMode[2] = OUTPUTMODE_OPEN;
+	Duty[0] = 0.0f;
+	Duty[1] = 0.0f;
+	Duty[2] = 0.0f;
+}
+
+void gLPF(float r, float wc, float Ts, float *y){
+	// Under approximation  1/wc >> Ts
+	// time constant tau = 1/wc
+	float gainLPF;
+	float yn_1;
+
+	gainLPF = wc * Ts;
+	yn_1 = *y;
+
+	*y = (1 - gainLPF) * yn_1 + gainLPF * r;
+}
+
+void gRateLimit(float r, float RateLimit, float Ts, float *y){
+	// Under approximation  1/wc >> Ts
+	// time constant tau = 1/wc
+	float dy;
+	float yn_1;
+	float ytmp;
+
+	dy = RateLimit * Ts;
+	yn_1 = *y;
+
+	if( r > yn_1 )
+		ytmp = yn_1 + dy;
+	else if( r < yn_1 )
+		ytmp = yn_1 - dy;
+
+	//ytmp = gUpperLowerLimit(ytmp, r, -1.0f * r);
+
+	*y = ytmp;
+
 }
 
 

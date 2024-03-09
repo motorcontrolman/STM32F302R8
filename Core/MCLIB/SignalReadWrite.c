@@ -12,11 +12,10 @@
 #include "SignalReadWrite.h"
 
 
-
 uint16_t Bemf_AD[3];
 
 uint8_t readButton1(void){
-	uint8_t B1;
+	volatile uint8_t B1;
 
 	B1 = HAL_GPIO_ReadPin(B1_GPIO_Port, B1_Pin);
 	return B1;
@@ -60,8 +59,9 @@ float readVolume(void){
 	float Volume;
 	uint16_t Volume_ad = gAdcValue[1];
 
-	//Volume = Volume_ad * 0.0002442f;
-	Volume = ((int16_t)Volume_ad - 856) * 0.000573394f;
+	Volume = ((int16_t)Volume_ad - 99)* 0.0002442f;
+	//Volume = ((int16_t)Volume_ad - 950) * 0.000573394f;
+	if( Volume < 0) Volume = 0;
 	return Volume;
 }
 
@@ -69,7 +69,7 @@ float readVdc(void){
 	// P-NUCLEO-IHM001(or 002), Vdc is connected to PA1(ADC2)
 	float Vdc;
 	uint16_t Vdc_ad = gAdcValue[0];
-	Vdc = Vdc_ad * 0.0154305f; // 1/(9.31/(9.31+169)*4096/3.3V)
+	Vdc = Vdc_ad * AD2VOLTAGE;
 	return Vdc;
 }
 
@@ -78,9 +78,9 @@ void readCurrent(uint16_t* Iuvw_AD, float* Iuvw){
 	Iuvw_AD[1] = ADC1 -> JDR2; // Iv
 	Iuvw_AD[2] = ADC1 -> JDR3; // Iw
 
-	Iuvw[0] = ((float)Iuvw_AD[0] - 1901) * -0.00193586253f;
-	Iuvw[1] = ((float)Iuvw_AD[1] - 1864) * -0.00193586253f;
-	Iuvw[2] = ((float)Iuvw_AD[2] - 1871) * -0.00193586253f;
+	Iuvw[0] = ((float)Iuvw_AD[0] - IU_ADOffSET) * AD2CURRENT;
+	Iuvw[1] = ((float)Iuvw_AD[1] - IV_ADOffSET) * AD2CURRENT;
+	Iuvw[2] = ((float)Iuvw_AD[2] - IW_ADOffSET) * AD2CURRENT;
 }
 
 void readHallSignal(uint8_t* Hall){
@@ -89,6 +89,17 @@ void readHallSignal(uint8_t* Hall){
 	Hall[1] = HAL_GPIO_ReadPin(GPIOB, H2_Pin);
 	Hall[2] = HAL_GPIO_ReadPin(GPIOB, H3_Pin);
 }
+/*
+void readCurrent2(uint16_t* Iuvw_AD, float* Iuvw){
+	Iuvw_AD[0] = ADC2 -> JDR1; // Iu
+	Iuvw_AD[1] = ADC2 -> JDR2; // Iv
+	Iuvw_AD[2] = ADC2 -> JDR3; // Iw
+
+	Iuvw[0] = ((float)Iuvw_AD[0] - IU2_ADOffSET) * AD2CURRENT;
+	Iuvw[1] = ((float)Iuvw_AD[1] - IV2_ADOffSET) * AD2CURRENT;
+	Iuvw[2] = ((float)Iuvw_AD[2] - IW2_ADOffSET) * AD2CURRENT;
+}
+*/
 
 void writeOutputMode(int8_t* outputMode){
 
@@ -116,3 +127,40 @@ void writeDuty(float* Duty){
 	TIM1 -> CCR3 = Duty[2] * (TIM1 -> ARR);
 }
 
+/*
+void writeDuty8(float* Duty){
+	// TIM1 -> ARR Means Counter Period of TIM8
+	TIM8 -> CCR1 = Duty[0] * (TIM8 -> ARR);
+	TIM8 -> CCR2 = Duty[1] * (TIM8 -> ARR);
+	TIM8 -> CCR3 = Duty[2] * (TIM8 -> ARR);
+}
+
+void writeDutyforOpenWinding(float* Duty){
+	if(Duty[0] > 0){
+		TIM1 -> CCR1 = Duty[0] * (TIM1 -> ARR);
+		TIM8 -> CCR1 = 0.0f * (TIM8 -> ARR);
+	}
+	else{
+		TIM1 -> CCR1 = 0.0f * (TIM1 -> ARR);
+		TIM8 -> CCR1 = -1.0f * Duty[0] * (TIM8 -> ARR);
+	}
+
+	if(Duty[1] > 0){
+		TIM1 -> CCR2 = Duty[1] * (TIM1 -> ARR);
+		TIM8 -> CCR2 = 0.0f * (TIM8 -> ARR);
+	}
+	else{
+		TIM1 -> CCR2 = 0.0f * (TIM1 -> ARR);
+		TIM8 -> CCR2 = -1.0f * Duty[1] * (TIM8 -> ARR);
+	}
+
+	if(Duty[2] > 0){
+		TIM1 -> CCR3 = Duty[2] * (TIM1 -> ARR);
+		TIM8 -> CCR3 = 0.0f * (TIM8 -> ARR);
+	}
+	else{
+		TIM1 -> CCR3 = 0.0f * (TIM1 -> ARR);
+		TIM8 -> CCR3 = -1.0f * Duty[2] * (TIM8 -> ARR);
+	}
+}
+*/
