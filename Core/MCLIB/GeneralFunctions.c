@@ -9,7 +9,7 @@
 #include <math.h>
 #include "main.h"
 #include "GeneralFunctions.h"
-#include "GlogalVariables.h"
+#include "GlobalConstants.h"
 
 float gfDivideAvoidZero(float num, float den, float  threshold){
 	float result;

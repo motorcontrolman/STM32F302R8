@@ -8,8 +8,14 @@
 #include <stdint.h>
 #include <math.h>
 #include "main.h"
-#include "GlogalVariables.h"
 #include "SignalReadWrite.h"
+#include "GlobalConstants.h"
+#include "GlobalVariables.h"
+#include "GeneralFunctions.h"
+
+static uint16_t sNoInputCaptureCnt = 0;
+static uint32_t sInputCaptureCnt;
+static uint32_t sInputCaptureCnt_pre;
 
 
 uint16_t Bemf_AD[3];
@@ -88,6 +94,27 @@ void readHallSignal(uint8_t* Hall){
 	Hall[0] = HAL_GPIO_ReadPin(H1_GPIO_Port, H1_Pin);
 	Hall[1] = HAL_GPIO_ReadPin(GPIOB, H2_Pin);
 	Hall[2] = HAL_GPIO_ReadPin(GPIOB, H3_Pin);
+}
+
+void readElectFreqFromHallSignal(float* electFreq){
+	float timeInterval;
+
+	// Hold & Read Input Capture Count
+	sInputCaptureCnt_pre = sInputCaptureCnt;
+	sInputCaptureCnt = readInputCaptureCnt();
+
+	// Calculate Electrical Freq From Input Capture Count
+	if(sInputCaptureCnt != sInputCaptureCnt_pre){
+		timeInterval = readTimeInterval(sInputCaptureCnt, sInputCaptureCnt_pre);
+		if( timeInterval > 0.0001f)
+			*electFreq = gfDivideAvoidZero(1.0f, timeInterval, SYSTEMCLOCKCYCLE);
+
+		sNoInputCaptureCnt = 0;
+	}
+	else if(sNoInputCaptureCnt < 2000)
+		sNoInputCaptureCnt ++;
+	else
+		*electFreq = 0;
 }
 /*
 void readCurrent2(uint16_t* Iuvw_AD, float* Iuvw){

@@ -1,6 +1,6 @@
 "./Core/MCLIB/ControlFunctions.o"
 "./Core/MCLIB/GeneralFunctions.o"
-"./Core/MCLIB/GlogalVariables.o"
+"./Core/MCLIB/GlobalVariables.o"
 "./Core/MCLIB/Sequence.o"
 "./Core/MCLIB/SignalReadWrite.o"
 "./Core/MCLIB/SixsStep.o"

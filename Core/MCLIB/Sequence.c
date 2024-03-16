@@ -5,11 +5,12 @@
  *      Author: r720r
  */
 
+#include "GlobalVariables.h"
 #include <stdint.h>
 #include "main.h"
-#include "GlogalVariables.h"
 #include "SignalReadWrite.h"
 #include "GeneralFunctions.h"
+#include "GlobalConstants.h"
 #include "Sequence.h"
 #include "SixsStep.h"
 #include "VectorControl.h"
@@ -18,6 +19,7 @@ static uint8_t sPosMode;
 static uint8_t sDrvMode;
 static uint16_t sInitCnt = 0;
 static float sElectAngle = 0;
+static float sElectAngleFreerun = 0;
 static float sElectAngVelo;
 static float sElectAngVeloRef = 0;
 static float sElectAngVeloRefRateLimit = 0;
@@ -33,6 +35,16 @@ static void slctElectAngleFromPosMode(uint8_t posMode, float *electAngle, float 
 static void slctCntlFromDrvMode(uint8_t drvMode, float* Duty, int8_t* outputMode);
 
 void Sequence(void){
+	//read IO signals
+	gButton1 = readButton1();
+	gVolume = readVolume();
+	readCurrent(gIuvw_AD, gIuvw);
+
+	gVdc = readVdc();
+	gTwoDivVdc = gfDivideAvoidZero(2.0f, gVdc, 1.0f);
+	readHallSignal(gHall);
+	readElectFreqFromHallSignal(&gElectFreq);
+
 
 	if(sInitCnt < 500){
 		sInitCnt++;
@@ -130,16 +142,16 @@ void slctElectAngleFromPosMode(uint8_t posMode, float *electAngle, float *electA
 
 	case POSMODE_FREERUN:
 		*electAngVelo = sElectAngVeloRefRateLimit;
-		sElectAngle = sElectAngle + sElectAngVeloRefRateLimit * CARRIERCYCLE ;
-		*electAngle = gfWrapTheta(sElectAngle);
+		sElectAngleFreerun = sElectAngleFreerun + sElectAngVeloRefRateLimit * CARRIERCYCLE ;
+		*electAngle = gfWrapTheta(sElectAngleFreerun);
 		break;
 	case POSMODE_HALL:
 		flgPLL = 0;
-		calcElectAngle(flgPLL, electAngle, electAngVelo);
+		calcElectAngle(gHall, gElectFreq, flgPLL, electAngle, electAngVelo);
 		break;
 	case POSMODE_HALL_PLL:
 		flgPLL = 1;
-		calcElectAngle(flgPLL, electAngle, electAngVelo);
+		calcElectAngle(gHall, gElectFreq, flgPLL, electAngle, electAngVelo);
 		break;
 	case POSMODE_SENSORLESS:
 		flgPLL = 1;
@@ -171,7 +183,7 @@ void slctCntlFromDrvMode(uint8_t drvMode, float* Duty, int8_t* outputMode){
 		case DRVMODE_OPENLOOP:
 			flgFB = 0;
 			flgPLL = 0;
-			VectorControlTasks(Idq_ref, sElectAngle, sElectAngVeloRefRateLimit, gIuvw, gVdc, gTwoDivVdc, flgFB, flgPLL, Duty, outputMode);
+			OpenLoopTasks(5.0f * gVolume, sElectAngle, gIuvw, gTwoDivVdc, Duty, outputMode);
 			break;
 		case DRVMODE_OPENLOOP_SENSORLESS:
 			flgFB = 0;

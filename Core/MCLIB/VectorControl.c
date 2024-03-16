@@ -8,8 +8,8 @@
 
 #include <stdint.h>
 #include "math.h"
-#include "GlogalVariables.h"
 #include "GeneralFunctions.h"
+#include "GlobalConstants.h"
 #include "VectorControl.h"
 #include "ControlFunctions.h"
 
@@ -61,38 +61,28 @@ void VectorControlTasks(float *Idq_ref, float electAngle, float electAngVelo, fl
 	omega = electAngVelo;
 
 
-	if ( flgFB == 0 ){
-		Vq_ref_open = Vdc * SQRT3DIV2_DIV2 * gVolume;
-		OpenLoopTasks(Vq_ref_open, electAngle, Iuvw, twoDivVdc, Duty, outputMode);
-		sVdq_i[0] = 0.0f;
-		sVdq_i[1] = Vq_ref_open;
-		sIq_ref_LPF = sIq_LPF;
-		}
-	else{
-
-		outputMode[0] = OUTPUTMODE_POSITIVE;
-		outputMode[1] = OUTPUTMODE_POSITIVE;
-		outputMode[2] = OUTPUTMODE_POSITIVE;
+	outputMode[0] = OUTPUTMODE_POSITIVE;
+	outputMode[1] = OUTPUTMODE_POSITIVE;
+	outputMode[2] = OUTPUTMODE_POSITIVE;
 
 
-		uvw2ab(gIuvw, sIab);
-		ab2dq(theta, sIab, sIdq);
+	uvw2ab(Iuvw, sIab);
+	ab2dq(theta, sIab, sIdq);
 
-		gLPF(Idq_ref[1], 62.8f, CARRIERCYCLE, &sIq_ref_LPF);
-		Idq_ref[1] = sIq_ref_LPF; // zanteisyori
-		CurrentFbControl(Idq_ref, sIdq, omega, Vdc, sVdq, &sVamp);
-		sMod = calcModFromVamp(sVamp, gTwoDivVdc);
+	gLPF(Idq_ref[1], 62.8f, CARRIERCYCLE, &sIq_ref_LPF);
+	Idq_ref[1] = sIq_ref_LPF; // zanteisyori
+	CurrentFbControl(Idq_ref, sIdq, omega, Vdc, sVdq, &sVamp);
+	sMod = calcModFromVamp(sVamp, twoDivVdc);
 
-		dq2ab(theta, sVdq, sVab);
-		ab2uvw(sVab, sVuvw);
+	dq2ab(theta, sVdq, sVab);
+	ab2uvw(sVab, sVuvw);
 
-		Vuvw2Duty(twoDivVdc, sVuvw, Duty);
+	Vuvw2Duty(twoDivVdc, sVuvw, Duty);
 
-		sIdq_ref_1000[0] = Idq_ref[0] * 1000.0f;
-		sIdq_ref_1000[1] = Idq_ref[1] * 1000.0f;
-		sIdq_1000[0] = sIdq[0] * 1000.0f;
-		sIdq_1000[1] = sIdq[1] * 1000.0f;
-	}
+	sIdq_ref_1000[0] = Idq_ref[0] * 1000.0f;
+	sIdq_ref_1000[1] = Idq_ref[1] * 1000.0f;
+	sIdq_1000[0] = sIdq[0] * 1000.0f;
+	sIdq_1000[1] = sIdq[1] * 1000.0f;
 
 	gLPF(sIdq[1], 125.6f, CARRIERCYCLE, &sIq_LPF);
 
@@ -103,7 +93,7 @@ void OpenLoopTasks(float VamRef, float theta, float *Iuvw, float twoDivVdc, floa
 	outputMode[1] = OUTPUTMODE_POSITIVE;
 	outputMode[2] = OUTPUTMODE_POSITIVE;
 
-	uvw2ab(gIuvw, sIab);
+	uvw2ab(Iuvw, sIab);
 	ab2dq(theta, sIab, sIdq);
 	sVdq[0] = 0.0f;
 	sVdq[1] = VamRef;

@@ -30,7 +30,7 @@ Core/MCLIB/GeneralFunctions.o: ../Core/MCLIB/GeneralFunctions.c \
  ../Drivers/STM32F3xx_HAL_Driver/Inc/stm32f3xx_hal_tim_ex.h \
  ../Drivers/STM32F3xx_HAL_Driver/Inc/stm32f3xx_hal_uart.h \
  ../Drivers/STM32F3xx_HAL_Driver/Inc/stm32f3xx_hal_uart_ex.h \
- ../Core/MCLIB/GeneralFunctions.h ../Core/MCLIB/GlogalVariables.h
+ ../Core/MCLIB/GeneralFunctions.h ../Core/MCLIB/GlobalConstants.h
 ../Core/Inc/main.h:
 ../Drivers/STM32F3xx_HAL_Driver/Inc/stm32f3xx_hal.h:
 ../Core/Inc/stm32f3xx_hal_conf.h:
@@ -64,4 +64,4 @@ Core/MCLIB/GeneralFunctions.o: ../Core/MCLIB/GeneralFunctions.c \
 ../Drivers/STM32F3xx_HAL_Driver/Inc/stm32f3xx_hal_uart.h:
 ../Drivers/STM32F3xx_HAL_Driver/Inc/stm32f3xx_hal_uart_ex.h:
 ../Core/MCLIB/GeneralFunctions.h:
-../Core/MCLIB/GlogalVariables.h:
+../Core/MCLIB/GlobalConstants.h:

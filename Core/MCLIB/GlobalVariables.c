@@ -7,16 +7,15 @@
 
 
 #include <stdint.h>
-#include "GlogalVariables.h"
 #include "main.h"
+#include "GlobalVariables.h"
 
 uint16_t gAdcValue[2];
 uint8_t gHall[3];
 uint8_t gButton1;
 uint32_t gTIMCounter;
 uint32_t gTIMCounter_pre;
-uint32_t gInputCaptureCnt;
-uint32_t gInputCaptureCnt_pre;
+
 float gElectFreq = 0;
 float gTheta = 0;
 float gElectAngVelo;

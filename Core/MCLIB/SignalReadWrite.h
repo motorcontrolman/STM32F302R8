@@ -32,6 +32,7 @@ float readVolume(void);
 float readVdc(void);
 void readCurrent(uint16_t* Iuvw_AD, float* Iuvw);
 void readHallSignal(uint8_t* Hall);
+void readElectFreqFromHallSignal(float* electFreq);
 // void readCurrent2(uint16_t* Iuvw_AD, float* Iuvw);
 void writeOutputMode(int8_t* outputMode);
 void writeDuty(float* Duty);

@@ -8,8 +8,8 @@
 
 #include <stdint.h>
 #include "main.h"
-#include "GlogalVariables.h"
 #include "SixsStep.h"
+#include "GlobalConstants.h"
 #include "SignalReadWrite.h"
 #include "GeneralFunctions.h"
 #include "ControlFunctions.h"
@@ -18,7 +18,6 @@
 static int8_t sOutputMode[3];
 static uint8_t sVoltageMode;
 static uint8_t sVoltageMode_pre;
-static uint16_t sNoInputCaptureCnt = 0;
 static uint8_t sVoltageModeChangedFlg;
 static int8_t sRotDir = 0;
 static uint8_t sFlgPLL;
@@ -36,7 +35,6 @@ static float sElectAngleErr;
 //static inline uint8_t calcVoltageMode(uint8_t* Hall);
 static inline void calcRotDirFromVoltageMode(uint8_t voltageMode_pre, uint8_t voltageMode, int8_t* rotDir);
 static inline float calcElectAngleFromVoltageMode(uint8_t voltageMode, int8_t rotDir);
-static inline uint8_t calcLeadAngleModeFlg(void);
 static inline uint8_t calcVoltageModeFromElectAngle(float electAngle);
 static inline void calcOutputMode(uint8_t voltageMode, int8_t* outputMode);
 static inline void calcDuty(int8_t* outputMode, float DutyRef, float* Duty);
@@ -82,37 +80,16 @@ void sixStepDrive(float DutyRef, uint8_t voltageMode, uint8_t leadAngleModeFlg, 
 
 }
 
-void calcElectAngle(uint8_t flgPLL, float* electAngle, float* electAngVelo){
+void calcElectAngle(uint8_t* hall, float electFreq, uint8_t flgPLL, float* electAngle, float* electAngVelo){
 
 	float wc_PLL;
 	float Kp_PLL;
 	float Ki_PLL;
 	float Ts_PLL;
-	float timeInterval;
-
-	// Read Hall Signals
-	readHallSignal(gHall);
-
-	// Hold & Read Input Capture Count
-	gInputCaptureCnt_pre = gInputCaptureCnt;
-	gInputCaptureCnt = readInputCaptureCnt();
-
-	// Calculate Electrical Freq From Input Capture Count
-	if(gInputCaptureCnt != gInputCaptureCnt_pre){
-		timeInterval = readTimeInterval(gInputCaptureCnt, gInputCaptureCnt_pre);
-		if( timeInterval > 0.0001f)
-			gElectFreq = gfDivideAvoidZero(1.0f, timeInterval, SYSTEMCLOCKCYCLE);
-
-		sNoInputCaptureCnt = 0;
-	}
-	else if(sNoInputCaptureCnt < 2000)
-		sNoInputCaptureCnt ++;
-	else
-		gElectFreq = 0;
-
 
 	// Calculate PLL Gain based on Electrical Angle Velocity
 	wc_PLL = sElectAngVeloEstimate * 0.5f;
+	wc_PLL = gUpperLowerLimit(wc_PLL, 100.0f, 0.0f);
 	Ts_PLL = 1.0f / (sElectAngVeloEstimate * ONEDIVTWOPI * 6.0f);
 	Kp_PLL = wc_PLL;
 	Ki_PLL = 0.2f * wc_PLL * wc_PLL * Ts_PLL;
@@ -120,7 +97,7 @@ void calcElectAngle(uint8_t flgPLL, float* electAngle, float* electAngVelo){
 
 	// Hold & Calculate Voltage Mode Based on Hall Signals
 	sVoltageMode_pre = sVoltageMode;
-	sVoltageMode = calcVoltageMode(gHall);
+	sVoltageMode = calcVoltageMode(hall);
 
 
 	// Hold & Read Actual Electrical Angle Based on Voltage Mode (Consider with Rotational Direction)
@@ -137,7 +114,7 @@ void calcElectAngle(uint8_t flgPLL, float* electAngle, float* electAngVelo){
 		// Six Step Control using Electrical Angle Consider with Lead Angle
 		// Reset EstOmega
 		if ( sFlgPLL_pre == 0 ){
-			sElectAngVeloEstimate = gElectFreq * TWOPI;
+			sElectAngVeloEstimate = electFreq * TWOPI;
 			sIntegral_ElectAngleErr_Ki = sElectAngVeloEstimate;
 			sElectAngleEstimate = sElectAngleActual;
 		}
@@ -158,7 +135,7 @@ void calcElectAngle(uint8_t flgPLL, float* electAngle, float* electAngVelo){
 	}
 	else{
 		sElectAngleEstimate = sElectAngleActual;
-		sElectAngVeloEstimate = gElectFreq * TWOPI;
+		sElectAngVeloEstimate = electFreq * TWOPI;
 	}
 
 	*electAngle = sElectAngleEstimate;
@@ -281,16 +258,6 @@ static float calcElectAngleFromVoltageMode(uint8_t voltageMode, int8_t rotDir){
 		return electAngle;
 }
 
-static uint8_t calcLeadAngleModeFlg(void){
-	uint8_t leadAngleModeFlg;
-
-	if(gButton1 == 0)
-		leadAngleModeFlg = 0;
-	else
-		leadAngleModeFlg = 1;
-
-	return leadAngleModeFlg;
-}
 
 static uint8_t calcVoltageModeFromElectAngle(float electAngle){
 	uint8_t voltageMode = 0;

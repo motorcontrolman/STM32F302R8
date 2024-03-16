@@ -22,11 +22,11 @@
 #include "stm32f3xx_it.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "GlogalVariables.h"
 #include "SixsStep.h"
 #include "VectorControl.h"
 #include "SignalReadWrite.h"
 #include "GeneralFunctions.h"
+#include "GlobalVariables.h"
 #include "Sequence.h"
 /* USER CODE END Includes */
 
@@ -63,6 +63,7 @@
 /* External variables --------------------------------------------------------*/
 extern DMA_HandleTypeDef hdma_adc1;
 extern ADC_HandleTypeDef hadc1;
+extern TIM_HandleTypeDef htim2;
 /* USER CODE BEGIN EV */
 
 /* USER CODE END EV */
@@ -225,35 +226,32 @@ void DMA1_Channel1_IRQHandler(void)
 void ADC1_IRQHandler(void)
 {
   /* USER CODE BEGIN ADC1_IRQn 0 */
-	int8_t rotDir;
-	float ErectFreqRef = 100.0f;
-	float ErectFreqErr;
-	uint8_t voltageMode_tmp;
-	float theta_tmp;
-	float electAngVelo_tmp;
-	float Idq_ref[2];
-	uint8_t leadAngleModeFlg;
-	uint8_t flgFB;
-	int8_t outputMode[3];
+
   /* USER CODE END ADC1_IRQn 0 */
   HAL_ADC_IRQHandler(&hadc1);
   /* USER CODE BEGIN ADC1_IRQn 1 */
 
 	HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
 
-	//read IO signals
-	gButton1 = readButton1();
-	gVolume = readVolume();
-	readCurrent(gIuvw_AD, gIuvw);
-
-	gVdc = readVdc();
-	gTwoDivVdc = gfDivideAvoidZero(2.0f, gVdc, 1.0f);
-
 	// Sequence Control
 	Sequence();
 
 	HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
   /* USER CODE END ADC1_IRQn 1 */
+}
+
+/**
+  * @brief This function handles TIM2 global interrupt.
+  */
+void TIM2_IRQHandler(void)
+{
+  /* USER CODE BEGIN TIM2_IRQn 0 */
+
+  /* USER CODE END TIM2_IRQn 0 */
+  HAL_TIM_IRQHandler(&htim2);
+  /* USER CODE BEGIN TIM2_IRQn 1 */
+
+  /* USER CODE END TIM2_IRQn 1 */
 }
 
 /* USER CODE BEGIN 1 */
