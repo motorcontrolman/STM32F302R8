@@ -11,9 +11,9 @@
 #include <stdint.h>
 #include "main.h"
 
-#define IU_ADOffSET			1895
-#define IV_ADOffSET			1883
-#define IW_ADOffSET			1867
+#define IU_ADOffSET			1917
+#define IV_ADOffSET			1881
+#define IW_ADOffSET			1907
 #define IU2_ADOffSET			1986
 #define IV2_ADOffSET			1967
 #define IW2_ADOffSET			1974
@@ -30,12 +30,14 @@ uint32_t readInputCaptureCnt(void);
 float readTimeInterval(uint32_t inputCaptureCnt, uint32_t inputCaptureCnt_pre);
 float readVolume(void);
 float readVdc(void);
-void readCurrent(uint16_t* Iuvw_AD, float* Iuvw);
+void readCurrent(uint16_t* Iuvw_AD, float* Iuvw_AD_Offset, float* Iuvw);
 void readHallSignal(uint8_t* Hall);
 void readElectFreqFromHallSignal(float* electFreq);
 // void readCurrent2(uint16_t* Iuvw_AD, float* Iuvw);
 void writeOutputMode(int8_t* outputMode);
 void writeDuty(float* Duty);
+void writeFreeRunCnt(uint16_t Cnt);
+uint16_t readFreeRunCnt(void);
 // void writeDuty8(float* Duty);
 // void writeDutyforOpenWinding(float* Duty);
 

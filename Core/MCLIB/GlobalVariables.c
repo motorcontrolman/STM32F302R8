@@ -30,6 +30,9 @@ uint16_t gIuvw2_AD[3];
 int8_t gOutputMode[3];
 float gDutyRef = 0;
 float gDuty[3];
+uint16_t gFreerunCnt;
+float gProcessingLoad;
+
 
 // uint8_t gPosMode;
 // uint8_t gDrvMode;

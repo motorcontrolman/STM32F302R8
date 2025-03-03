@@ -40,6 +40,8 @@ extern float gDuty[3];
 extern uint8_t gPosMode;
 extern uint8_t gDrvMode;
 extern uint16_t gInitCnt;
+extern uint16_t gFreerunCnt;
+extern float gProcessingLoad;
 
 
 #endif /* MCLIB_GLOBALVARIABLES_H_ */

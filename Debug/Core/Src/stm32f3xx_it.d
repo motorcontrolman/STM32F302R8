@@ -33,6 +33,7 @@ Core/Src/stm32f3xx_it.o: ../Core/Src/stm32f3xx_it.c ../Core/Inc/main.h \
  ../Core/Inc/stm32f3xx_it.h \
  C:/Users/r720r/STM32CubeIDE/workspace_1.12.1/STM32F302R8/Core/MCLIB/SixsStep.h \
  C:/Users/r720r/STM32CubeIDE/workspace_1.12.1/STM32F302R8/Core/MCLIB/VectorControl.h \
+ C:/Users/r720r/STM32CubeIDE/workspace_1.12.1/STM32F302R8/Core/MCLIB/GlobalStruct.h \
  C:/Users/r720r/STM32CubeIDE/workspace_1.12.1/STM32F302R8/Core/MCLIB/SignalReadWrite.h \
  C:/Users/r720r/STM32CubeIDE/workspace_1.12.1/STM32F302R8/Core/MCLIB/GeneralFunctions.h \
  C:/Users/r720r/STM32CubeIDE/workspace_1.12.1/STM32F302R8/Core/MCLIB/GlobalVariables.h \
@@ -72,6 +73,7 @@ Core/Src/stm32f3xx_it.o: ../Core/Src/stm32f3xx_it.c ../Core/Inc/main.h \
 ../Core/Inc/stm32f3xx_it.h:
 C:/Users/r720r/STM32CubeIDE/workspace_1.12.1/STM32F302R8/Core/MCLIB/SixsStep.h:
 C:/Users/r720r/STM32CubeIDE/workspace_1.12.1/STM32F302R8/Core/MCLIB/VectorControl.h:
+C:/Users/r720r/STM32CubeIDE/workspace_1.12.1/STM32F302R8/Core/MCLIB/GlobalStruct.h:
 C:/Users/r720r/STM32CubeIDE/workspace_1.12.1/STM32F302R8/Core/MCLIB/SignalReadWrite.h:
 C:/Users/r720r/STM32CubeIDE/workspace_1.12.1/STM32F302R8/Core/MCLIB/GeneralFunctions.h:
 C:/Users/r720r/STM32CubeIDE/workspace_1.12.1/STM32F302R8/Core/MCLIB/GlobalVariables.h:

@@ -24,6 +24,7 @@ uint8_t readButton1(void){
 	volatile uint8_t B1;
 
 	B1 = HAL_GPIO_ReadPin(B1_GPIO_Port, B1_Pin);
+	B1 = 0b00000001 & (~B1);
 	return B1;
 }
 
@@ -79,14 +80,14 @@ float readVdc(void){
 	return Vdc;
 }
 
-void readCurrent(uint16_t* Iuvw_AD, float* Iuvw){
+void readCurrent(uint16_t* Iuvw_AD, float* Iuvw_AD_Offset, float* Iuvw){
 	Iuvw_AD[0] = ADC1 -> JDR1; // Iu
 	Iuvw_AD[1] = ADC1 -> JDR2; // Iv
 	Iuvw_AD[2] = ADC1 -> JDR3; // Iw
 
-	Iuvw[0] = ((float)Iuvw_AD[0] - IU_ADOffSET) * AD2CURRENT;
-	Iuvw[1] = ((float)Iuvw_AD[1] - IV_ADOffSET) * AD2CURRENT;
-	Iuvw[2] = ((float)Iuvw_AD[2] - IW_ADOffSET) * AD2CURRENT;
+	Iuvw[0] = ((float)Iuvw_AD[0] - Iuvw_AD_Offset[0]) * AD2CURRENT;
+	Iuvw[1] = ((float)Iuvw_AD[1] - Iuvw_AD_Offset[1]) * AD2CURRENT;
+	Iuvw[2] = ((float)Iuvw_AD[2] - Iuvw_AD_Offset[2]) * AD2CURRENT;
 }
 
 void readHallSignal(uint8_t* Hall){
@@ -111,6 +112,7 @@ void readElectFreqFromHallSignal(float* electFreq){
 
 		sNoInputCaptureCnt = 0;
 	}
+	// If Input Capture Count keep same value, Set Electrical Freq Zero
 	else if(sNoInputCaptureCnt < 2000)
 		sNoInputCaptureCnt ++;
 	else
@@ -152,6 +154,16 @@ void writeDuty(float* Duty){
 	TIM1 -> CCR1 = Duty[0] * (TIM1 -> ARR);
 	TIM1 -> CCR2 = Duty[1] * (TIM1 -> ARR);
 	TIM1 -> CCR3 = Duty[2] * (TIM1 -> ARR);
+}
+
+void writeFreeRunCnt(uint16_t Cnt){
+	TIM16 -> CNT = Cnt;
+}
+
+uint16_t readFreeRunCnt(void){
+	uint16_t Cnt;
+	Cnt = TIM16 -> CNT;
+	return Cnt;
 }
 
 /*

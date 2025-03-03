@@ -18,7 +18,6 @@
 static int8_t sOutputMode[3];
 static uint8_t sVoltageMode;
 static uint8_t sVoltageMode_pre;
-static uint8_t sVoltageModeChangedFlg;
 static int8_t sRotDir = 0;
 static uint8_t sFlgPLL;
 static uint8_t sFlgPLL_pre;
@@ -89,7 +88,7 @@ void calcElectAngle(uint8_t* hall, float electFreq, uint8_t flgPLL, float* elect
 
 	// Calculate PLL Gain based on Electrical Angle Velocity
 	wc_PLL = sElectAngVeloEstimate * 0.5f;
-	wc_PLL = gUpperLowerLimit(wc_PLL, 100.0f, 0.0f);
+	wc_PLL = gUpperLowerLimit(wc_PLL, 500.0f, 0.0f);
 	Ts_PLL = 1.0f / (sElectAngVeloEstimate * ONEDIVTWOPI * 6.0f);
 	Kp_PLL = wc_PLL;
 	Ki_PLL = 0.2f * wc_PLL * wc_PLL * Ts_PLL;
@@ -203,6 +202,7 @@ uint8_t calcVoltageMode(uint8_t* Hall){
 		voltageMode = 0;
 	  break;
 	}
+
 	return voltageMode;
 }
 
@@ -229,29 +229,7 @@ static float calcElectAngleFromVoltageMode(uint8_t voltageMode, int8_t rotDir){
 		float electAngle_Center;
 
 		// Calculate Center ElectAngle of the Area
-		switch(voltageMode){
-		  case 3:
-			  electAngle_Center = 0.0f;
-			break;
-		  case 4:
-			  electAngle_Center = PIDIV3;
-			break;
-		  case 5:
-			  electAngle_Center = PIDIV3 * 2.0f;
-			break;
-		  case 6:
-			  electAngle_Center = PI;
-			break;
-		  case 1:
-			  electAngle_Center = -PIDIV3 * 2.0f;
-			break;
-		  case 2:
-			  electAngle_Center = -PIDIV3;
-			break;
-		  default :
-			  electAngle_Center = 0.0f;
-		  break;
-		}
+		electAngle_Center = ( (float)voltageMode - 3.0f ) * PIDIV3;
 
 		electAngle = electAngle_Center - PIDIV6 * (float)rotDir;
 

@@ -56,8 +56,9 @@ void gOffDuty(float* Duty, int8_t* outputMode){
 }
 
 void gLPF(float r, float wc, float Ts, float *y){
+	// wc is angular frequency, tau = 1/wc.
 	// Under approximation  1/wc >> Ts
-	// time constant tau = 1/wc
+	// gainLPF = Ts/(tau + Ts) = Ts / tau = wc * Ts;
 	float gainLPF;
 	float yn_1;
 
@@ -68,8 +69,6 @@ void gLPF(float r, float wc, float Ts, float *y){
 }
 
 void gRateLimit(float r, float RateLimit, float Ts, float *y){
-	// Under approximation  1/wc >> Ts
-	// time constant tau = 1/wc
 	float dy;
 	float yn_1;
 	float ytmp;
